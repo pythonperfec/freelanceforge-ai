@@ -9,6 +9,9 @@
     "dev": "node --watch server/index.js",
     "test": "node --test tests/**/*.test.js"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "keywords": [
     "open-source-ai",
     "freelancer",

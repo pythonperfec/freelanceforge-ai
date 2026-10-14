@@ -3,12 +3,14 @@ services:
     name: freelanceforge-ai
     runtime: node
     plan: standard # Uses your $50 Render credit smoothly or can run on free
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "22"
       - key: PORT
         value: 10000
       - key: GROQ_API_KEY
