@@ -312,6 +312,8 @@ class WorkspaceController {
           }, 1400);
         }
       });
+    }
+
     // Stop active generation button
     if (this.btnStopForge) {
       this.btnStopForge.addEventListener('click', () => {
@@ -898,7 +900,7 @@ class WorkspaceController {
     if (this.jargonAlertSheet) {
       this.jargonAlertSheet.hidden = false;
       if (this.jargonSampleText) {
-        const preview = input.length > 70 ? input.slice(0, 70) + '...' : input;
+        const preview = input ? (input.length > 70 ? input.slice(0, 70) + '...' : input) : '(Empty input)';
         this.jargonSampleText.textContent = `"${preview}"`;
       }
       if (this.jargonGuideItems) {
@@ -918,8 +920,21 @@ class WorkspaceController {
     const clientName = this.clientNameInput.value.trim() || 'Client';
 
     if (!input) {
-      alert('Please enter your project notes or click a starter outline first.');
+      this.showJargonState('', {
+        isJargon: true,
+        reason: 'No project requirements or task hours were entered.',
+        suggestion: 'Please enter your project notes or pick an outline template on the left.'
+      });
       this.rawInput.focus();
+      if (this.pretextCard) {
+        this.pretextCard.style.transition = 'all 0.3s ease';
+        this.pretextCard.style.borderColor = 'var(--accent-ember)';
+        this.pretextCard.style.boxShadow = '0 0 0 3px var(--accent-ember-soft)';
+        setTimeout(() => {
+          this.pretextCard.style.borderColor = '';
+          this.pretextCard.style.boxShadow = '';
+        }, 1800);
+      }
       return;
     }
 
