@@ -35,16 +35,36 @@
     </div>
 
     <div class="header-right">
-      <div class="engine-indicator" id="engine-indicator" title="Inference target">
+      <div class="engine-indicator" id="engine-indicator" title="Inference engine status (Click to refresh)">
         <span class="engine-dot" id="engine-dot"></span>
         <span class="engine-label" id="engine-label">detecting model...</span>
       </div>
+      <script>
+        (function() {
+          function updateBadge(d) {
+            var lbl = document.getElementById('engine-label');
+            var dot = document.getElementById('engine-dot');
+            if (!lbl || !dot) return;
+            if (d && d.preferredEngine === 'ollama') {
+              dot.style.backgroundColor = 'var(--status-green)';
+              lbl.textContent = 'local (Llama 3.1)';
+            } else if (d && d.preferredEngine === 'groq') {
+              dot.style.backgroundColor = 'var(--accent-ember)';
+              lbl.textContent = 'hosted (Groq)';
+            } else if (d && d.preferredEngine === 'synthesizer') {
+              dot.style.backgroundColor = 'var(--border-color)';
+              lbl.textContent = 'local synthesis';
+            }
+          }
+          fetch('/api/health').then(function(r) { return r.json(); }).then(updateBadge).catch(function() {});
+        })();
+      </script>
 
       <button type="button" class="btn-ghost" id="theme-toggle" title="Toggle theme (Paper / Forge)">
         <span class="theme-text" id="theme-text">Forge theme</span>
       </button>
 
-      <button type="button" class="btn-ghost icon-only" id="btn-shortcuts" title="Keyboard shortcuts (?)">
+      <button type="button" class="btn-ghost icon-only" id="btn-shortcuts" title="Made by Ishan Khan — Under Hacktoberfest Open-Source AI Challenge project">
         <span class="key-hint">?</span>
       </button>
     </div>
@@ -133,17 +153,6 @@
           </div>
         </div>
 
-        <!-- Input Mode Tabs: Raw Brief vs System Prompt Transparency -->
-        <div class="input-desk-tabs" role="tablist">
-          <button type="button" class="input-desk-tab active" id="tab-mode-notes" role="tab" aria-selected="true">
-            <span class="tab-mode-text">Input Brief</span>
-          </button>
-          <button type="button" class="input-desk-tab" id="tab-mode-prompt" role="tab" aria-selected="false">
-            <span class="tab-mode-text">System Prompt</span>
-            <span class="transparency-pill" id="prompt-customized-pill">transparency</span>
-          </button>
-        </div>
-
         <!-- Notes Input Group -->
         <div class="form-group flex-fill" id="notes-input-group">
           <div class="label-with-meta">
@@ -177,20 +186,6 @@
           </div>
 
           <textarea id="raw-input" class="field-input textarea-field" placeholder="Paste your rough notes, audio transcript, or client email here..."></textarea>
-        </div>
-
-        <!-- Prompt Transparency Group (Editable System Prompt) -->
-        <div class="form-group flex-fill" id="prompt-transparency-group" hidden>
-          <div class="prompt-transparency-header">
-            <div class="transparency-info">
-              <span class="transparency-title">System Persona &amp; Model Behavior</span>
-              <p class="transparency-subtitle">Inspect or edit the exact system prompt governing Llama 3.1 for this tool. Changes immediately alter how the agent behaves.</p>
-            </div>
-            <button type="button" class="btn-ghost" id="btn-reset-prompt" title="Revert to default prompt">
-              Reset to default
-            </button>
-          </div>
-          <textarea id="custom-system-prompt" class="field-input textarea-field prompt-editor" spellcheck="false" placeholder="Loading system prompt..."></textarea>
         </div>
 
         <!-- Action bar -->
@@ -368,15 +363,31 @@
     </div>
   </footer>
 
-  <!-- Keyboard Shortcuts Dialog -->
+  <!-- Keyboard Shortcuts & Project Credits Dialog -->
   <dialog class="modal-dialog" id="shortcuts-modal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title">Keyboard Shortcuts</h3>
+        <div class="modal-header-text">
+          <h3 class="modal-title">FreelanceForge AI</h3>
+          <span class="modal-subtitle">Shortcuts & Project Information</span>
+        </div>
         <button type="button" class="btn-ghost icon-only" id="btn-close-modal" aria-label="Close">
           &times;
         </button>
       </div>
+
+      <!-- Creator & Challenge Attribution Card -->
+      <div class="creator-challenge-card">
+        <div class="creator-badge-row">
+          <span class="creator-badge-tag">Creator</span>
+          <span class="creator-badge-name">Made by <strong>Ishan Khan</strong></span>
+        </div>
+        <div class="challenge-badge-row">
+          <span class="challenge-dot">★</span>
+          <span class="challenge-badge-text">Under <strong>Hacktoberfest Open-Source AI Challenge</strong> project</span>
+        </div>
+      </div>
+
       <div class="shortcuts-grid">
         <div class="shortcut-row">
           <span class="shortcut-keys"><span class="key">Ctrl</span> + <span class="key">↵</span></span>
@@ -400,7 +411,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <p class="modal-hint">Built for Hacktoberfest 2026: Open-Source AI (Week 2 &mdash; Side Hustle)</p>
+        <p class="modal-hint">Made by <strong>Ishan Khan</strong> &bull; Under <strong>Hacktoberfest Open-Source AI Challenge</strong> project</p>
       </div>
     </div>
   </dialog>

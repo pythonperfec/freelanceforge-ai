@@ -150,6 +150,14 @@ body {
   padding: 3px 8px;
   border-radius: var(--radius-xs);
   background-color: var(--bg-surface-alt);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.engine-indicator:hover {
+  border-color: var(--accent-ember);
+  color: var(--color-ink);
 }
 
 .engine-dot {
@@ -1312,15 +1320,78 @@ textarea.raw-markdown-editor {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 12px;
 }
 
+.modal-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-faint);
+}
+
 .modal-title {
   font-family: var(--font-serif);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
+  color: var(--color-ink);
+}
+
+.creator-challenge-card {
+  background: var(--bg-surface-alt);
+  border: 1.5px solid var(--accent-ember);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(200, 67, 27, 0.08);
+}
+
+.creator-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-ink);
+}
+
+.creator-badge-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  background-color: var(--accent-ember);
+  color: #FFFFFF;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.creator-badge-name strong {
+  color: var(--accent-ember);
+}
+
+.challenge-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-muted);
+}
+
+.challenge-dot {
+  color: var(--accent-ember);
+  font-size: 12px;
 }
 
 .shortcuts-grid {

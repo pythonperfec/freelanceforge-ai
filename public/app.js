@@ -186,16 +186,14 @@ class WorkspaceController {
     this.currentOutputMarkdown = '';
     this.currentTheme = localStorage.getItem('ff_theme') || 'paper';
 
-    this.defaultPrompts = {};
-    this.customPrompts = {};
-    this.currentInputMode = 'notes';
-
     this.cacheDom();
     this.applyTheme(this.currentTheme);
     this.bindEvents();
     this.switchTool('proposal');
     this.pollSystemStatus();
-    this.fetchDefaultPrompts();
+
+    // Continuous status polling every 4s to ensure model presence is always live
+    setInterval(() => this.pollSystemStatus(), 4000);
   }
 
   cacheDom() {
@@ -203,20 +201,15 @@ class WorkspaceController {
     this.themeToggleBtn = document.getElementById('theme-toggle');
     this.themeText = document.getElementById('theme-text');
     this.btnShortcuts = document.getElementById('btn-shortcuts');
+    this.engineIndicator = document.getElementById('engine-indicator');
     this.engineDot = document.getElementById('engine-dot');
     this.engineLabel = document.getElementById('engine-label');
 
     // Rail
     this.railButtons = document.querySelectorAll('.rail-item');
 
-    // Input Pane & Mode Tabs
-    this.tabModeNotes = document.getElementById('tab-mode-notes');
-    this.tabModePrompt = document.getElementById('tab-mode-prompt');
+    // Input Pane
     this.notesInputGroup = document.getElementById('notes-input-group');
-    this.promptTransparencyGroup = document.getElementById('prompt-transparency-group');
-    this.customSystemPrompt = document.getElementById('custom-system-prompt');
-    this.btnResetPrompt = document.getElementById('btn-reset-prompt');
-    this.promptCustomizedPill = document.getElementById('prompt-customized-pill');
 
     this.toolTitle = document.getElementById('tool-title');
     this.toolSubtitle = document.getElementById('tool-subtitle');
@@ -362,17 +355,18 @@ class WorkspaceController {
       });
     }
 
-    // Prompt transparency mode tabs
-    if (this.tabModeNotes && this.tabModePrompt) {
-      this.tabModeNotes.addEventListener('click', () => this.setInputMode('notes'));
-      this.tabModePrompt.addEventListener('click', () => this.setInputMode('prompt'));
+    // Re-check model status on clicking the indicator badge
+    if (this.engineIndicator) {
+      this.engineIndicator.addEventListener('click', () => {
+        if (this.engineLabel) this.engineLabel.textContent = 'detecting...';
+        this.pollSystemStatus();
+      });
     }
-    if (this.btnResetPrompt) {
-      this.btnResetPrompt.addEventListener('click', () => this.resetCustomPrompt());
-    }
-    if (this.customSystemPrompt) {
-      this.customSystemPrompt.addEventListener('input', () => this.handlePromptEdit());
-    }
+
+    // Auto-poll model presence whenever window regains focus
+    window.addEventListener('focus', () => {
+      this.pollSystemStatus();
+    });
 
     // Tone selector
     this.toneButtons.forEach(btn => {
@@ -497,7 +491,6 @@ class WorkspaceController {
     });
 
     this.analyzeInput();
-    this.updatePromptEditor();
   }
 
   analyzeInput() {
@@ -712,84 +705,7 @@ class WorkspaceController {
     }
   }
 
-  async fetchDefaultPrompts() {
-    try {
-      const res = await fetch('/api/prompts');
-      if (res.ok) {
-        const data = await res.json();
-        this.defaultPrompts = data.prompts || {};
-        this.updatePromptEditor();
-      }
-    } catch (e) {
-      console.warn('Failed to fetch default prompts:', e);
-    }
-  }
 
-  setInputMode(mode) {
-    this.currentInputMode = mode;
-    if (mode === 'notes') {
-      this.tabModeNotes.classList.add('active');
-      this.tabModeNotes.setAttribute('aria-selected', 'true');
-      this.tabModePrompt.classList.remove('active');
-      this.tabModePrompt.setAttribute('aria-selected', 'false');
-      this.notesInputGroup.hidden = false;
-      this.promptTransparencyGroup.hidden = true;
-    } else {
-      this.tabModePrompt.classList.add('active');
-      this.tabModePrompt.setAttribute('aria-selected', 'true');
-      this.tabModeNotes.classList.remove('active');
-      this.tabModeNotes.setAttribute('aria-selected', 'false');
-      this.notesInputGroup.hidden = true;
-      this.promptTransparencyGroup.hidden = false;
-      this.updatePromptEditor();
-    }
-  }
-
-  updatePromptEditor() {
-    const defaultP = this.defaultPrompts[this.currentTool] || '';
-    const currentVal = this.customPrompts[this.currentTool] !== undefined
-      ? this.customPrompts[this.currentTool]
-      : defaultP;
-
-    if (this.customSystemPrompt) {
-      this.customSystemPrompt.value = currentVal;
-    }
-    this.updatePromptCustomizedBadge();
-  }
-
-  handlePromptEdit() {
-    const edited = this.customSystemPrompt.value;
-    this.customPrompts[this.currentTool] = edited;
-    this.updatePromptCustomizedBadge();
-  }
-
-  updatePromptCustomizedBadge() {
-    const defaultP = this.defaultPrompts[this.currentTool] || '';
-    const currentP = this.customPrompts[this.currentTool];
-    const isModified = currentP !== undefined && currentP.trim() !== defaultP.trim();
-
-    if (this.promptCustomizedPill) {
-      if (isModified) {
-        this.promptCustomizedPill.classList.add('modified');
-        this.promptCustomizedPill.textContent = 'modified';
-      } else {
-        this.promptCustomizedPill.classList.remove('modified');
-        this.promptCustomizedPill.textContent = 'transparency';
-      }
-    }
-  }
-
-  resetCustomPrompt() {
-    delete this.customPrompts[this.currentTool];
-    this.updatePromptEditor();
-  }
-
-  getEffectivePrompt() {
-    if (this.customPrompts[this.currentTool] !== undefined) {
-      return this.customPrompts[this.currentTool];
-    }
-    return null;
-  }
 
   isJargonOrGibberish(raw) {
     const text = (raw || '').trim();
@@ -972,7 +888,7 @@ class WorkspaceController {
           tool: this.currentTool,
           input,
           clientName,
-          customSystemPrompt: this.getEffectivePrompt()
+          customSystemPrompt: null
         }),
         signal: this.currentAbortController.signal
       });
