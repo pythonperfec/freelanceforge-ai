@@ -1,5 +1,6 @@
-# ⚡ FreelanceForge AI
-### *Local-First Open-Weight AI Suite for High-Value Freelancers*
+# FreelanceForge AI
+
+A local-first, open-weight AI workspace for freelancers to draft proposals, itemize invoices, establish scope boundaries, and manage client communications.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Built with Node.js](https://img.shields.io/badge/Node.js-v22-green.svg)](https://nodejs.org/)
@@ -7,39 +8,36 @@
 [![Deploy on Render](https://img.shields.io/badge/Deploy-Render-46E3B7.svg)](render.yaml)
 [![Memory: Backboard.io](https://img.shields.io/badge/Memory-Backboard.io-orange.svg)](https://backboard.io)
 
-> **Submission for the [Hacktoberfest Open-Source AI Challenge Week 2: Side Hustle](https://dev.to/challenges/hacktoberfest-week2-2026-10-12)**
+*Submission for the [Hacktoberfest Open-Source AI Challenge Week 2: Side Hustle](https://dev.to/challenges/hacktoberfest-week2-2026-10-12).*
 
 ---
 
-## 🎯 What It Does
+## Overview
 
-Freelancers lose up to **30% of their billable hours** to administrative friction: writing proposals, itemizing invoices, negotiating scope creep, and drafting diplomatic replies to difficult client messages.
+Administrative work like drafting proposals, detailing invoices, defining scope, and handling awkward client emails can take up a significant portion of a freelancer's working hours. 
 
-**FreelanceForge AI** is an open-source, local-first toolkit that turns messy audio notes, bullet points, and Slack messages into polished, client-ready deliverables:
+FreelanceForge AI is an open-source, local-first application built to handle these tasks directly on your machine. Instead of sending sensitive project notes to third-party proprietary services, it uses local open weights (Llama 3.1 8B via Ollama) and persistent memory via Backboard.io to generate structured, client-ready documents.
 
-1. 📄 **Project Proposal Generator:** Converts rough scoping bullets and audio voice memos into comprehensive 5-figure project proposals with deliverables, timelines, and payment terms.
-2. 🧾 **Invoice Value Justifier:** Translates technical commits and hours into executive business ROI breakdowns that clients pay without dispute.
-3. 🛡️ **Scope Guardian:** Shields freelancers from unpaid scope creep by generating airtight Statement of Work (SOW) boundary documents with add-on rate menus.
-4. 💬 **Client Diplomat:** Generates 3 diplomatic, boundary-setting response strategies (Warm, Firm, Direct) to navigate delicate situations like delayed payments or pushy deadlines.
-5. 🎙️ **Voice-Note Dictation:** Record spontaneous voice memos immediately after a client call; the built-in speech engine transcribes it on the fly and auto-formats it into a structured brief.
-6. 🔍 **Prompt Transparency (Change How Your Agent Behaves):** Unlike closed SaaS tools where system prompts are black boxes, FreelanceForge exposes the exact system prompt governing Llama 3.1 for every tool. Freelancers can inspect and edit it directly to customize tone, inject custom contract clauses, or fine-tune formatting.
+### Key Tools
 
----
-
-## 💡 Why Open Innovation Matters
-
-Running an open-weight model locally solves the fatal flaws of commercial closed-source AI wrappers:
-
-| Challenge with Closed APIs | How FreelanceForge AI Wins with Open Innovation |
-|---|---|
-| **NDA Violations & Data Leaks:** Clients require confidentiality; sending unreleased product roadmaps to cloud APIs breaches contract terms. | **100% On-Device Privacy:** With Ollama and Llama 3.1 8B, data never leaves the freelancer's machine. Zero server telemetry. |
-| **Crushing Metered SaaS Fees:** Commercial API tokens eat 15–20% of an independent freelancer's margin. | **$0 Marginal Token Cost:** Running local open weights costs exactly $0 per generation. Permanent 100% gross profit margin. |
-| **Black-Box System Prompts:** Closed tools hide their prompts behind proprietary locks, preventing you from changing how the agent reasons. | **Prompt Transparency:** Inspect, edit, and fine-tune the exact system instructions governing the model on the fly. |
-| **Vendor Lock-in & Deprecation:** Closed providers deprecate system prompt behaviors and hike pricing without warning. | **Model Portability:** Switch freely between Llama 3.1, Mistral, Gemma 2, or domain-tuned weights with one line in `.env`. |
+- **Proposal Draft:** Converts unorganized meeting notes or audio memos into structured proposals with milestone schedules, deliverable breakdowns, and payment terms.
+- **Invoice Value Justifier:** Translates task lists, hours, or Git commits into business-outcome line items for client billing.
+- **Scope Guardian:** Analyzes new client requests against original agreements, generating a clear Statement of Work (SOW) boundary document, an add-on quote, and a response script.
+- **Client Diplomat:** Provides communication templates with three selectable tones (Warm, Firm, Direct) for situations like overdue payments or scope adjustments.
+- **Voice Dictation:** Uses the browser's Web Speech API to transcribe voice notes in real time and automatically structure them into project briefs.
+- **Prompt Transparency:** Allows users to inspect and customize the underlying system prompts directly in the interface to match their preferred tone, contract terms, or local legal requirements.
 
 ---
 
-## 🏗️ Architecture
+## Why Local-First Open Weights
+
+1. **Client Confidentiality:** Freelancers frequently handle non-disclosure agreements, unreleased product roadmaps, and private financial agreements. Local inference via Ollama ensures that client data never leaves the developer's laptop.
+2. **Zero Marginal Token Costs:** Commercial API fees add up quickly when generating long-form proposals and detailed invoices. Running local weights costs nothing per token.
+3. **Model Flexibility:** No vendor lock-in. The backend can route between local Ollama instances, hosted open-weight fallbacks (such as Groq for cloud demos), or offline template synthesizers based on configuration.
+
+---
+
+## Architecture
 
 ```mermaid
 graph TD
@@ -63,31 +61,23 @@ graph TD
 
 ---
 
-## 🏆 Partner Prize Categories Entered
+## Partner Categories
 
-### 1. 🧠 Best Use of Backboard ($100 Partner Prize)
-FreelanceForge AI integrates **Backboard.io** (`backboard-sdk`) to solve a critical freelance pain point: **client rate memory and commercial continuity**.
-- **Vector Memory & Rate RAG:** Backboard tracks client-specific agreed hourly rates (e.g. `$95/hr`), currencies, payment terms (e.g. `Net 15`, `50% deposit`), and historical scopes.
-- **RAG Prompt Injection:** When a repeat client is entered, Backboard retrieves their historical profile and primes the local Llama 3.1 prompt with exact commercial terms so future invoices and scopes stay consistent without manual re-entry.
-- **Client Memory Vault & Right to be Forgotten:** Freelancers can inspect remembered clients directly via the UI modal (`/api/memory/clients`) and clear stored memories on demand for complete privacy compliance.
-- **Dual-Mode Architecture:** Operates with Backboard Cloud vector search when `BACKBOARD_API_KEY` is present, or local-first persistent storage when offline.
-
-### 2. ☁️ Best Use of Render ($200 Featured Prize)
-- Configured with `render.yaml` infrastructure-as-code for 1-click Blueprint deployment.
-- Seamlessly falls back to hosted open-weight Llama 3.1 on Groq Cloud when running in the cloud demo environment.
-
-### 3. 🤖 Best Use of GitHub Copilot ($100 Partner Prize)
-- Developed and pair-programmed with GitHub Copilot agentic coding assistance for test suite generation, cross-platform POSIX compatibility, and regex pattern verification.
+### Best Use of Backboard ($100 Partner Category)
+FreelanceForge AI integrates **Backboard.io** (`backboard-sdk`) for persistent client memory and rate context:
+- **Rate & Term Extraction:** Automatically parses agreed hourly rates (e.g., `$95/hr`), fixed pricing, and payment terms (`Net 15`, `50% deposit`) from generated deliverables.
+- **RAG Context Injection:** When a returning client name is provided, the application retrieves their historical terms from Backboard and injects them into the prompt to preserve pricing consistency.
+- **Right to Be Forgotten:** Allows users to view and delete stored client records directly from the interface.
+- **Dual-Mode Operation:** Connects to Backboard Cloud when `BACKBOARD_API_KEY` is configured, with a local persistent fallback when offline.
 
 ---
 
-## 🚀 Quick Start (Local Setup)
+## Getting Started
 
-### 1. Prerequisites & Ollama Setup
+### 1. Prerequisites (Ollama Setup)
 
-FreelanceForge AI is designed to run 100% locally with open-weight models.
+To run models locally, install Ollama:
 
-#### Install Ollama:
 - **Windows (PowerShell):**
   ```powershell
   irm https://ollama.com/install.ps1 | iex
@@ -96,69 +86,79 @@ FreelanceForge AI is designed to run 100% locally with open-weight models.
   ```bash
   curl -fsSL https://ollama.com/install.sh | sh
   ```
-- Or download the installer directly from [ollama.com/download](https://ollama.com/download).
+- Or download the installer directly from [ollama.com](https://ollama.com/download).
 
-#### Pull the Open-Weight Model:
+Pull the default model:
 ```bash
 ollama pull llama3.1:8b
 ```
 
-#### Verify Ollama is Ready:
+Verify that the local daemon is running:
 ```bash
 curl http://localhost:11434/api/tags
 ```
-If `llama3.1:8b` appears in the list, local inference is ready.
 
 ---
 
-### 2. Clone & Install
+### 2. Installation
+
 ```bash
-git clone https://github.com/Ishan-Khan/freelanceforge-ai.git
+git clone https://github.com/pythonperfec/freelanceforge-ai.git
 cd freelanceforge-ai
 npm install
 ```
 
-### 3. Configure Environment
+### 3. Environment Configuration
+
 ```bash
 cp .env.example .env
 ```
-*(Optional)* Add your `BACKBOARD_API_KEY` or `GROQ_API_KEY` for cloud fallbacks or hosted demos.
 
-### 4. Run Tests
-Validate the multi-tier engine selection priority (Ollama -> Groq -> Synthesizer):
+Set any optional API keys in `.env`:
+- `BACKBOARD_API_KEY`: Backboard.io key for cloud client memory.
+- `GROQ_API_KEY`: Groq key for cloud demo fallback when Ollama is unavailable.
+
+### 4. Running Tests
+
+Run the test suite to verify memory integration and provider priority logic:
 ```bash
 npm test
 ```
 
-### 5. Start the Server
+### 5. Start Application
+
 ```bash
 npm start
 ```
-Visit **[http://localhost:3000](http://localhost:3000)** in your browser!
 
-You can also check the live engine health status anytime at:
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+You can check system status and active engine availability at:
 ```bash
 curl http://localhost:3000/api/health
 ```
 
 ---
 
-## ☁️ Deploy to Render in 1 Click
+## Deployment (Render)
 
-1. Fork or push this repository to GitHub.
-2. In [Render Dashboard](https://dashboard.render.com), click **New +** → **Blueprint**.
-3. Connect your repository. Render automatically reads `render.yaml` and deploys the service.
-4. Add your `GROQ_API_KEY` (free open-weight fallback) in Render environment variables for the live demo.
+The repository includes both `render.yaml` and `render.yml` configured for the Render Free tier:
 
----
-
-## ⚠️ Limitations & Good to Know
-
-- **Local Hardware Requirements:** Running Llama 3.1 8B locally requires at least 8 GB of unified memory/VRAM (or 16 GB system RAM on CPU). If hardware limits are reached, FreelanceForge seamlessly routes to the hosted Groq fallback or the offline template synthesizer.
-- **Hosted Cloud Demo Data Privacy:** When testing the live hosted demo (e.g. on Render), inference runs via Groq Cloud open-weights rather than on-device. For confidential NDA client projects, always run FreelanceForge locally with Ollama.
-- **Legal & Tax Advisory:** Invoices and Statements of Work generated by FreelanceForge are structured templates; freelancers should review local contract and tax compliance laws before issuing binding commercial agreements.
+1. Push your repository to GitHub.
+2. In the [Render Dashboard](https://dashboard.render.com), select **New +** → **Blueprint**.
+3. Connect your repository. Render will automatically read the configuration and set up the service on the free plan.
+4. Add `BACKBOARD_API_KEY` and `GROQ_API_KEY` under Environment Variables.
 
 ---
 
-## 📄 License
-This project is open-source under the **[MIT License](LICENSE)**. Built for the community with open-source AI.
+## Notes & Technical Considerations
+
+- **Hardware Recommendations:** Running Llama 3.1 8B locally performs best on systems with at least 8 GB of unified memory/VRAM (or 16 GB of system RAM for CPU inference). When hardware constraints prevent local execution, the server routes to the configured cloud fallback or offline template synthesizer.
+- **Data Privacy:** Local execution runs entirely on-device with no data sent to external servers. If using the hosted cloud demo, inference routes through Groq open weights.
+- **Compliance:** Generated proposals and invoices are structured templates. Users should review them for local tax and contract regulations before sending them to clients.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
