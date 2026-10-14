@@ -63,12 +63,21 @@ graph TD
 
 ---
 
-## 🏆 Partner Technologies Used
+## 🏆 Partner Prize Categories Entered
 
-- **Render ($50 Hacktoberfest Credit):** Configured via `render.yaml` for instant 1-click cloud deployment and public demo testing.
-- **Backboard.io ($5 Hacktoberfest Credit):** Integrated via `backboard-sdk` to remember client history, past rates, and tone preferences across freelance projects.
-- **Mastra AI:** Utilized as the modular agent harness to orchestrate memory retrieval, tool prompt synthesis, and multi-model dispatch.
-- **Llama 3.1 8B (Meta / Open-Weights):** Runs locally via Ollama under permissive open-weight licensing.
+### 1. 🧠 Best Use of Backboard ($100 Partner Prize)
+FreelanceForge AI integrates **Backboard.io** (`backboard-sdk`) to solve a critical freelance pain point: **client rate memory and commercial continuity**.
+- **Vector Memory & Rate RAG:** Backboard tracks client-specific agreed hourly rates (e.g. `$95/hr`), currencies, payment terms (e.g. `Net 15`, `50% deposit`), and historical scopes.
+- **RAG Prompt Injection:** When a repeat client is entered, Backboard retrieves their historical profile and primes the local Llama 3.1 prompt with exact commercial terms so future invoices and scopes stay consistent without manual re-entry.
+- **Client Memory Vault & Right to be Forgotten:** Freelancers can inspect remembered clients directly via the UI modal (`/api/memory/clients`) and clear stored memories on demand for complete privacy compliance.
+- **Dual-Mode Architecture:** Operates with Backboard Cloud vector search when `BACKBOARD_API_KEY` is present, or local-first persistent storage when offline.
+
+### 2. ☁️ Best Use of Render ($200 Featured Prize)
+- Configured with `render.yaml` infrastructure-as-code for 1-click Blueprint deployment.
+- Seamlessly falls back to hosted open-weight Llama 3.1 on Groq Cloud when running in the cloud demo environment.
+
+### 3. 🤖 Best Use of GitHub Copilot ($100 Partner Prize)
+- Developed and pair-programmed with GitHub Copilot agentic coding assistance for test suite generation, cross-platform POSIX compatibility, and regex pattern verification.
 
 ---
 

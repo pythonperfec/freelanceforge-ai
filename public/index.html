@@ -159,6 +159,13 @@
           <label for="client-name" class="field-label">Client or Project Name</label>
           <input type="text" id="client-name" class="field-input text-field"
             placeholder="e.g. Acme HealthTech, Sarah from Studio" value="" autocomplete="off">
+          <div class="client-memory-strip" id="client-memory-strip" hidden>
+            <div class="memory-chip" id="memory-chip">
+              <span class="memory-icon">🧠</span>
+              <span class="memory-text" id="memory-chip-text">Backboard Memory: Remembers agreed rate $95/hr &bull; Net 15</span>
+              <button type="button" class="btn-memory-view" id="btn-view-memory" title="Inspect client memory">Inspect</button>
+            </div>
+          </div>
         </div>
 
         <!-- Tone / Stance selector (active for reply & scope) -->
@@ -381,10 +388,10 @@
         <span class="status-value" id="status-latency">-- ms</span>
       </span>
       <span class="status-sep">/</span>
-      <span class="status-item">
+      <button type="button" class="status-item btn-status-action" id="btn-open-memory" title="Open Backboard Memory Vault">
         <span class="status-label">memory:</span>
         <span class="status-value" id="status-memory">backboard ready</span>
-      </span>
+      </button>
     </div>
 
     <div class="status-right footer-attribution">
@@ -445,6 +452,42 @@
       <div class="modal-footer">
         <p class="modal-hint">Made by <strong>Ishan Khan</strong> &bull; Under <strong>Hacktoberfest Open-Source AI
             Challenge</strong> project</p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Backboard Client Memory Vault Dialog -->
+  <dialog class="modal-dialog" id="memory-modal">
+    <div class="modal-card memory-modal-card">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <h3 class="modal-title">🧠 Backboard Client Memory Vault</h3>
+          <span class="modal-subtitle">Persistent business memory & rate continuity across freelance deliverables</span>
+        </div>
+        <button type="button" class="btn-ghost icon-only" id="btn-close-memory-modal" aria-label="Close">
+          &times;
+        </button>
+      </div>
+
+      <div class="memory-vault-body">
+        <div class="memory-vault-status-bar">
+          <div class="vault-status-left">
+            <span class="pulse-dot" id="vault-pulse-dot"></span>
+            <span id="vault-status-text">Backboard Engine: Active</span>
+          </div>
+          <span class="vault-count-badge" id="vault-client-count">0 Clients Remembered</span>
+        </div>
+
+        <div class="memory-clients-list" id="memory-clients-list">
+          <!-- Dynamically populated client memory cards -->
+          <div class="memory-empty-state" id="memory-empty-state">
+            <p>No client memories stored yet. As you generate proposals and invoices with client names, Backboard automatically tracks agreed rates, payment terms, and deliverable histories.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer memory-modal-footer">
+        <span class="memory-privacy-notice">🔒 Privacy-first: Backboard gives you full Right to Be Forgotten. You can clear client records at any time.</span>
       </div>
     </div>
   </dialog>

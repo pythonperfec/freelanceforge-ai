@@ -1536,6 +1536,220 @@ textarea.raw-markdown-editor {
 }
 
 /* --------------------------------------------------------------------------
+   Backboard Client Memory & Vault
+   -------------------------------------------------------------------------- */
+.client-memory-strip {
+  margin-top: 6px;
+}
+
+.memory-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--accent-sage);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  animation: fadeInMemory 0.25s ease;
+}
+
+@keyframes fadeInMemory {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.memory-icon {
+  font-size: 13px;
+}
+
+.memory-text {
+  font-weight: 500;
+}
+
+.btn-memory-view {
+  background: none;
+  border: none;
+  color: var(--accent-ember);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: underline;
+  padding: 0 2px;
+  margin-left: 4px;
+}
+
+.btn-memory-view:hover {
+  color: var(--color-ink);
+}
+
+.btn-status-action {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  transition: opacity 0.15s ease;
+}
+
+.btn-status-action:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.memory-modal-card {
+  width: 540px;
+  max-width: 95vw;
+}
+
+.memory-vault-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.memory-vault-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.vault-status-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-sage);
+}
+
+.vault-count-badge {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xs);
+  padding: 2px 8px;
+  font-weight: 600;
+}
+
+.memory-clients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.memory-empty-state {
+  padding: 24px;
+  text-align: center;
+  color: var(--color-ink-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.memory-client-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-surface);
+  transition: border-color 0.15s ease;
+}
+
+.memory-client-card:hover {
+  border-color: var(--accent-ember);
+}
+
+.client-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.client-card-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.client-card-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-muted);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.client-badge-rate {
+  background-color: var(--accent-ember-soft);
+  color: var(--accent-ember);
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+}
+
+.client-badge-terms {
+  background-color: var(--accent-sage-soft);
+  color: var(--accent-sage);
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+}
+
+.btn-client-delete {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xs);
+  color: var(--color-ink-faint);
+  font-size: 11px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all 0.15s ease;
+}
+
+.btn-client-delete:hover {
+  border-color: var(--accent-ember);
+  color: var(--accent-ember);
+}
+
+.memory-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.memory-privacy-notice {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-ink-faint);
+}
+
+/* --------------------------------------------------------------------------
    Print Stylesheet
    -------------------------------------------------------------------------- */
 @media print {

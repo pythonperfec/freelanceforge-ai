@@ -85,8 +85,28 @@ export function formatPrompt(tool, input, clientContext = null, customSystem = n
     : (SYSTEM_PROMPTS[tool] || SYSTEM_PROMPTS.proposal);
   
   let userContent = `INPUT NOTES / RAW DETAILS:\n${input.trim()}`;
-  if (clientContext && Object.keys(clientContext).length > 0) {
-    userContent += `\n\nCLIENT HISTORICAL MEMORY (Retrieved via Backboard):\n${JSON.stringify(clientContext, null, 2)}`;
+  if (clientContext && (clientContext.terms || clientContext.history?.length || clientContext.memories?.length)) {
+    let memoryBlock = `\n\n### 🧠 CLIENT HISTORICAL MEMORY (Retrieved via Backboard):`;
+    if (clientContext.terms?.rate) {
+      memoryBlock += `\n- Previously Agreed Rate / Pricing: ${clientContext.terms.rate}`;
+    }
+    if (clientContext.terms?.paymentTerms) {
+      memoryBlock += `\n- Standard Payment Terms: ${clientContext.terms.paymentTerms}`;
+    }
+    if (clientContext.history && clientContext.history.length > 0) {
+      memoryBlock += `\n- Recent Engagements with ${clientContext.clientName}:`;
+      for (const h of clientContext.history.slice(0, 3)) {
+        memoryBlock += `\n  * [${h.tool}] ${h.summary.slice(0, 120)}...`;
+      }
+    }
+    if (clientContext.memories && clientContext.memories.length > 0) {
+      memoryBlock += `\n- Vector Knowledge Base Matches:`;
+      for (const m of clientContext.memories.slice(0, 3)) {
+        memoryBlock += `\n  * ${typeof m === 'string' ? m.slice(0, 160) : JSON.stringify(m)}`;
+      }
+    }
+    memoryBlock += `\n(Instruction: Maintain commercial continuity with these remembered rates and terms unless new rates are explicitly requested.)`;
+    userContent += memoryBlock;
   }
 
   return {

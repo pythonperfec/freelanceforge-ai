@@ -47,10 +47,44 @@ app.get('/api/health', async (req, res) => {
         model: engineData.engines.groq.model
       },
       backboardMemory: {
-        active: backboardService.isCloudActive()
+        active: backboardService.isCloudActive(),
+        assistantId: backboardService.getAssistantId()
       }
     }
   });
+});
+
+// Backboard Memory Management Endpoints
+app.get('/api/memory/status', (req, res) => {
+  res.json({
+    cloudActive: backboardService.isCloudActive(),
+    assistantId: backboardService.getAssistantId(),
+    clientCount: backboardService.getRememberedClients().length,
+    mode: backboardService.isCloudActive() ? 'backboard-cloud' : 'local-persistent'
+  });
+});
+
+app.get('/api/memory/clients', (req, res) => {
+  res.json({
+    clients: backboardService.getRememberedClients(),
+    cloudActive: backboardService.isCloudActive()
+  });
+});
+
+app.get('/api/memory/client/:name', async (req, res) => {
+  const clientName = req.params.name;
+  const context = await backboardService.getClientContext(clientName);
+  res.json({
+    clientName,
+    found: !!context,
+    context: context || null
+  });
+});
+
+app.delete('/api/memory/client/:name', async (req, res) => {
+  const clientName = req.params.name;
+  const removed = await backboardService.deleteClientMemory(clientName);
+  res.json({ clientName, success: removed });
 });
 
 // Non-Streaming Generation Endpoint

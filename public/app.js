@@ -287,6 +287,18 @@ class WorkspaceController {
     // Modal
     this.shortcutsModal = document.getElementById('shortcuts-modal');
     this.btnCloseModal = document.getElementById('btn-close-modal');
+
+    // Backboard Memory Elements
+    this.clientMemoryStrip = document.getElementById('client-memory-strip');
+    this.memoryChipText = document.getElementById('memory-chip-text');
+    this.btnViewMemory = document.getElementById('btn-view-memory');
+    this.btnOpenMemory = document.getElementById('btn-open-memory');
+    this.memoryModal = document.getElementById('memory-modal');
+    this.btnCloseMemoryModal = document.getElementById('btn-close-memory-modal');
+    this.vaultClientCount = document.getElementById('vault-client-count');
+    this.vaultStatusText = document.getElementById('vault-status-text');
+    this.memoryClientsList = document.getElementById('memory-clients-list');
+    this.memoryDebounceTimer = null;
   }
 
   bindEvents() {
@@ -414,6 +426,32 @@ class WorkspaceController {
     if (this.shortcutsModal) {
       this.shortcutsModal.addEventListener('click', (e) => {
         if (e.target === this.shortcutsModal) this.shortcutsModal.close();
+      });
+    }
+
+    // Client Name input listener for Backboard memory retrieval
+    if (this.clientNameInput) {
+      this.clientNameInput.addEventListener('input', () => {
+        clearTimeout(this.memoryDebounceTimer);
+        this.memoryDebounceTimer = setTimeout(() => {
+          this.checkClientMemory(this.clientNameInput.value.trim());
+        }, 300);
+      });
+    }
+
+    // Backboard Memory Vault Modal openers
+    if (this.btnViewMemory) {
+      this.btnViewMemory.addEventListener('click', () => this.openMemoryVault());
+    }
+    if (this.btnOpenMemory) {
+      this.btnOpenMemory.addEventListener('click', () => this.openMemoryVault());
+    }
+    if (this.btnCloseMemoryModal) {
+      this.btnCloseMemoryModal.addEventListener('click', () => this.memoryModal?.close());
+    }
+    if (this.memoryModal) {
+      this.memoryModal.addEventListener('click', (e) => {
+        if (e.target === this.memoryModal) this.memoryModal.close();
       });
     }
 
@@ -992,6 +1030,10 @@ class WorkspaceController {
         this.statusMemory.textContent = 'backboard cloud';
       }
 
+      if (clientName) {
+        setTimeout(() => this.checkClientMemory(clientName), 500);
+      }
+
       this.setOutputTab('preview');
     } catch (err) {
       if (err.name === 'AbortError') {
@@ -1146,6 +1188,109 @@ class WorkspaceController {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  }
+
+  async checkClientMemory(clientName) {
+    if (!this.clientMemoryStrip) return;
+    if (!clientName || clientName.length < 2) {
+      this.clientMemoryStrip.hidden = true;
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/memory/client/${encodeURIComponent(clientName)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.found && data.context) {
+          const terms = data.context.terms || {};
+          const historyCount = data.context.history?.length || 0;
+          let labelParts = [];
+          if (terms.rate) labelParts.push(`Rate: ${terms.rate}`);
+          if (terms.paymentTerms) labelParts.push(`Terms: ${terms.paymentTerms}`);
+          if (historyCount > 0) labelParts.push(`${historyCount} engagement${historyCount === 1 ? '' : 's'}`);
+          if (data.context.memories?.length) labelParts.push(`${data.context.memories.length} cloud memories`);
+
+          const desc = labelParts.length > 0 ? labelParts.join(' • ') : 'Client profile active';
+          if (this.memoryChipText) {
+            this.memoryChipText.textContent = `Backboard Memory: ${desc}`;
+          }
+          this.clientMemoryStrip.hidden = false;
+          return;
+        }
+      }
+      this.clientMemoryStrip.hidden = true;
+    } catch {
+      this.clientMemoryStrip.hidden = true;
+    }
+  }
+
+  async openMemoryVault() {
+    if (!this.memoryModal) return;
+    this.memoryModal.showModal();
+
+    try {
+      const [statusRes, clientsRes] = await Promise.all([
+        fetch('/api/memory/status').then(r => r.json()).catch(() => ({})),
+        fetch('/api/memory/clients').then(r => r.json()).catch(() => ({ clients: [] }))
+      ]);
+
+      if (this.vaultStatusText) {
+        this.vaultStatusText.textContent = statusRes.cloudActive
+          ? `Backboard Cloud Vector Memory: Active (Assistant: ${statusRes.assistantId ? statusRes.assistantId.slice(0, 10) + '...' : 'ready'})`
+          : 'Backboard Local Persistent Memory: Active';
+      }
+
+      const clients = clientsRes.clients || [];
+      if (this.vaultClientCount) {
+        this.vaultClientCount.textContent = `${clients.length} Client${clients.length === 1 ? '' : 's'} Remembered`;
+      }
+
+      if (this.memoryClientsList) {
+        if (clients.length === 0) {
+          this.memoryClientsList.innerHTML = `
+            <div class="memory-empty-state">
+              <p>No client memories stored yet. As you generate proposals and invoices with client names, Backboard automatically tracks agreed rates, payment terms, and deliverable histories.</p>
+            </div>`;
+        } else {
+          this.memoryClientsList.innerHTML = clients.map(c => `
+            <div class="memory-client-card">
+              <div class="client-card-info">
+                <span class="client-card-name">${this.escapeHtml(c.name)}</span>
+                <div class="client-card-meta">
+                  ${c.rate ? `<span class="client-badge-rate">Rate: ${this.escapeHtml(c.rate)}</span>` : ''}
+                  ${c.paymentTerms ? `<span class="client-badge-terms">Terms: ${this.escapeHtml(c.paymentTerms)}</span>` : ''}
+                  <span>${c.interactionsCount} engagement${c.interactionsCount === 1 ? '' : 's'}</span>
+                </div>
+              </div>
+              <button type="button" class="btn-client-delete" data-client="${this.escapeHtml(c.name)}" title="Clear memory for this client">
+                Forget
+              </button>
+            </div>
+          `).join('');
+
+          // Bind delete buttons
+          this.memoryClientsList.querySelectorAll('.btn-client-delete').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const name = btn.getAttribute('data-client');
+              if (confirm(`Forget all Backboard memory for "${name}"?`)) {
+                await fetch(`/api/memory/client/${encodeURIComponent(name)}`, { method: 'DELETE' });
+                this.openMemoryVault();
+                if (this.clientNameInput && this.clientNameInput.value.trim().toLowerCase() === name.toLowerCase()) {
+                  this.checkClientMemory(name);
+                }
+              }
+            });
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching memory vault:', err);
+    }
+  }
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 }
 
