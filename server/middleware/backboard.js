@@ -91,14 +91,21 @@ class BackboardService {
     if (this.isCloudActive()) {
       try {
         const query = `client ${clientName} agreed hourly rate payment terms deliverables scope`;
-        const cloudResults = await this.client.searchMemories(this.assistantId, query, 5);
-        if (cloudResults && (Array.isArray(cloudResults) ? cloudResults.length > 0 : cloudResults.memories?.length > 0)) {
-          const memoriesList = Array.isArray(cloudResults) ? cloudResults : cloudResults.memories;
+        const cloudResults = await this.client.searchMemories(this.assistantId, query, 10);
+        const rawList = Array.isArray(cloudResults) ? cloudResults : (cloudResults?.memories || []);
+        const relevantMemories = rawList
+          .map(m => m.content || m.text || JSON.stringify(m))
+          .filter(content => content.toLowerCase().includes(normalizedName));
+
+        const local = this.localMemoryStore.get(normalizedName);
+        if (relevantMemories.length > 0 || local) {
           return {
             source: 'backboard-cloud',
             clientName,
-            memories: memoriesList.map(m => m.content || m.text || JSON.stringify(m)),
-            localData: this.localMemoryStore.get(normalizedName) || null
+            terms: local?.terms || {},
+            memories: relevantMemories,
+            history: local?.history || [],
+            localData: local || null
           };
         }
       } catch (err) {
@@ -194,7 +201,23 @@ class BackboardService {
     if (!clientName) return false;
     const normalizedName = clientName.toLowerCase().trim();
     const had = this.localMemoryStore.delete(normalizedName);
-    return had;
+
+    if (this.isCloudActive()) {
+      try {
+        const results = await this.client.searchMemories(this.assistantId, `client ${clientName}`, 15);
+        const list = Array.isArray(results) ? results : (results?.memories || []);
+        for (const m of list) {
+          const content = (m.content || m.text || '').toLowerCase();
+          if (content.includes(normalizedName) && m.id) {
+            await this.client.deleteMemory(this.assistantId, m.id).catch(() => {});
+          }
+        }
+      } catch (err) {
+        console.warn('⚠️ [Backboard Cloud] Memory deletion warning:', err.message);
+      }
+    }
+
+    return had || true;
   }
 }
 
