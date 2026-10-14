@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreelanceForge AI — Local-First Open-Weight Freelancer Toolkit</title>
+  <meta name="description" content="Local-first AI suite for freelancers. Turn messy notes into high-converting proposals, ROI-backed invoices, scope boundaries, and diplomatic replies using open-weight Llama 3.1.">
+  
+  <!-- Modern Typography (Google Fonts: Outfit & Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Markdown Parser (marked.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <div class="app-container">
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">FreelanceForge <span class="highlight">AI</span></span>
+          <span class="brand-badge">Open-Weight</span>
+        </div>
+      </div>
+
+      <div class="system-status-pills">
+        <div class="status-pill" id="ollama-status-pill">
+          <span class="status-dot"></span>
+          <span id="ollama-status-text">Checking Model...</span>
+        </div>
+        <div class="status-pill backboard-pill" id="backboard-status-pill" title="Persistent client memory powered by Backboard.io">
+          <span class="status-dot"></span>
+          <span>Backboard Memory</span>
+        </div>
+        <a href="https://render.com" target="_blank" rel="noopener" class="status-pill render-pill" title="Deployed on Render with $50 Hacktoberfest credit">
+          <span class="status-dot green"></span>
+          <span>Render Live</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Hero Title -->
+    <section class="hero-section">
+      <div class="hero-chip">
+        <span>🏆 Built for Hacktoberfest 2026: Open-Source AI (Week 2 — Side Hustle)</span>
+      </div>
+      <h1 class="hero-heading">
+        Turn Messy Client Notes Into <br>
+        <span class="gradient-text">High-Income Deliverables.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Local-first AI suite that crafts winning proposals, ROI invoices, scope boundary contracts, and diplomatic replies — <strong>zero data leaves your machine.</strong>
+      </p>
+    </section>
+
+    <!-- Tool Selection Tabs -->
+    <nav class="tool-tabs" id="tool-tabs" aria-label="Tool selection">
+      <button type="button" class="tool-tab active" data-tool="proposal" id="tab-proposal">
+        <div class="tab-icon">📄</div>
+        <div class="tab-info">
+          <span class="tab-title">Proposal Generator</span>
+          <span class="tab-desc">Bullet notes → 5-figure project scope</span>
+        </div>
+      </button>
+
+      <button type="button" class="tool-tab" data-tool="invoice" id="tab-invoice">
+        <div class="tab-icon">🧾</div>
+        <div class="tab-info">
+          <span class="tab-title">Invoice Value Justifier</span>
+          <span class="tab-desc">Raw hours → business ROI breakdown</span>
+        </div>
+      </button>
+
+      <button type="button" class="tool-tab" data-tool="scope" id="tab-scope">
+        <div class="tab-icon">🛡️</div>
+        <div class="tab-info">
+          <span class="tab-title">Scope Guardian</span>
+          <span class="tab-desc">Stop scope creep & price add-ons</span>
+        </div>
+      </button>
+
+      <button type="button" class="tool-tab" data-tool="reply" id="tab-reply">
+        <div class="tab-icon">💬</div>
+        <div class="tab-info">
+          <span class="tab-title">Client Diplomat</span>
+          <span class="tab-desc">3 boundary-setting reply strategies</span>
+        </div>
+      </button>
+    </nav>
+
+    <!-- Main Dual-Pane Workspace -->
+    <main class="workspace-grid">
+      <!-- Input Column -->
+      <section class="workspace-card input-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <span class="card-step-badge">1</span>
+            <h2 class="card-title" id="input-heading">Input Project Notes</h2>
+          </div>
+          <div class="sample-picker">
+            <label for="sample-select">Load Scenario:</label>
+            <select id="sample-select" aria-label="Load pre-built scenario">
+              <option value="">-- Choose Example --</option>
+              <option value="proposal-ecommerce">E-commerce Replatforming Proposal</option>
+              <option value="invoice-consulting">Full-Stack Sprint Invoice Justification</option>
+              <option value="scope-extra-features">Client Demanding 4 Extra Unpaid Features</option>
+              <option value="reply-late-payment">Polite but Firm Late Invoice Follow-up</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="client-input-group">
+          <label for="client-name-input" class="input-label">
+            Client / Company Name
+            <span class="helper-text">(Backboard uses this for cross-session memory)</span>
+          </label>
+          <div class="input-with-icon">
+            <span class="field-icon">🏢</span>
+            <input type="text" id="client-name-input" placeholder="e.g. Apex HealthTech, Nomad Studios" value="Nexus Interactive">
+          </div>
+        </div>
+
+        <div class="prompt-input-group">
+          <div class="label-row">
+            <label for="notes-textarea" class="input-label" id="notes-label">Raw Notes or Rough Description</label>
+            <span class="char-count" id="char-count">0 words</span>
+          </div>
+          <textarea 
+            id="notes-textarea" 
+            rows="9" 
+            placeholder="Paste your rough meeting bullet points, audio voice note transcripts, or raw requirements here..."
+          ></textarea>
+        </div>
+
+        <div class="input-actions-bar">
+          <div class="privacy-guarantee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span id="privacy-text">Local Inference: Data stays on device</span>
+          </div>
+
+          <button type="button" class="btn-primary" id="btn-generate">
+            <span class="btn-text">Generate Deliverable</span>
+            <span class="btn-spinner" id="btn-spinner" hidden></span>
+            <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- Output Column -->
+      <section class="workspace-card output-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <span class="card-step-badge">2</span>
+            <h2 class="card-title">Generated Deliverable</h2>
+          </div>
+          <div class="output-metadata" id="output-meta">
+            <span class="meta-pill" id="meta-model">Llama 3.1 8B</span>
+            <span class="meta-pill" id="meta-latency">-- ms</span>
+            <span class="meta-pill memory-tag" id="meta-memory">🧠 Memory Synced</span>
+          </div>
+        </div>
+
+        <!-- Toolbar for output actions -->
+        <div class="output-toolbar">
+          <div class="view-toggle">
+            <button type="button" class="toggle-btn active" id="btn-view-rendered">Preview</button>
+            <button type="button" class="toggle-btn" id="btn-view-markdown">Markdown</button>
+          </div>
+
+          <div class="action-buttons">
+            <button type="button" class="action-btn" id="btn-copy" title="Copy to clipboard">
+              <span class="btn-icon">📋</span>
+              <span class="btn-label">Copy</span>
+            </button>
+            <button type="button" class="action-btn" id="btn-download" title="Download markdown file">
+              <span class="btn-icon">💾</span>
+              <span class="btn-label">Save .md</span>
+            </button>
+            <button type="button" class="action-btn" id="btn-print" title="Print or save as PDF">
+              <span class="btn-icon">🖨️</span>
+              <span class="btn-label">Print / PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Output display container -->
+        <div class="output-content-area" id="output-content-area">
+          <div class="empty-state" id="empty-state">
+            <div class="empty-state-icon">⚡</div>
+            <h3>Ready to Forge Deliverable</h3>
+            <p>Select a tool above, load a sample or type your notes, and click <strong>Generate Deliverable</strong>.</p>
+            <div class="quick-tags">
+              <span>Proposals</span>
+              <span>Invoices</span>
+              <span>Scope Sheets</span>
+              <span>Client Negotiations</span>
+            </div>
+          </div>
+
+          <!-- Rendered HTML Container -->
+          <div class="rendered-markdown-view" id="rendered-view" hidden></div>
+
+          <!-- Raw Markdown Textarea (for direct copy/editing) -->
+          <textarea class="raw-markdown-view" id="raw-markdown-view" readonly hidden></textarea>
+        </div>
+      </section>
+    </main>
+
+    <!-- Why Open Innovation Matters Section -->
+    <section class="value-props-section">
+      <div class="section-title-wrap">
+        <h2 class="section-title">Why Open Innovation Matters for Freelancers</h2>
+        <p class="section-desc">Why running open-weight models locally creates a sustainable, profitable side-hustle business.</p>
+      </div>
+
+      <div class="props-grid">
+        <div class="prop-card">
+          <div class="prop-icon">🛡️</div>
+          <h3 class="prop-title">100% Client Data Confidentiality</h3>
+          <p class="prop-desc">Freelancers sign strict NDAs. Sending client proprietary specs, unreleased product roadmaps, or financial numbers to public closed APIs risks legal liability. FreelanceForge runs local weights so zero client data ever touches a server you don't control.</p>
+        </div>
+
+        <div class="prop-card">
+          <div class="prop-icon">💰</div>
+          <h3 class="prop-title">$0 Marginal Cost Per Generation</h3>
+          <p class="prop-desc">Commercial API wrappers quickly eat up monthly software budgets with unpredictable token meter billing. Running open-weight Llama 3.1 8B locally on your own hardware costs $0 per proposal, giving you permanent 100% gross profit margins.</p>
+        </div>
+
+        <div class="prop-card">
+          <div class="prop-icon">🔄</div>
+          <h3 class="prop-title">No Vendor Lock-in & Model Swapping</h3>
+          <p class="prop-desc">Closed API providers routinely deprecate endpoints, change system prompt behavior, or hike pricing. With open innovation, you can swap between Llama 3.1, Mistral, Gemma, or domain fine-tunes without rewriting your business workflow.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>Built with ❤️ for <strong>Hacktoberfest 2026 Open-Source AI Challenge</strong></span>
+        <span class="footer-divider">•</span>
+        <span>Theme: <em>Side Hustle</em></span>
+      </div>
+      <div class="footer-right">
+        <span class="partner-tag">Render Cloud</span>
+        <span class="partner-tag">Backboard.io</span>
+        <span class="partner-tag">Mastra Harness</span>
+        <span class="partner-tag">Llama 3.1</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "freelanceforge-ai",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Local-first open-weight AI toolkit for freelancers — proposals, invoices, scope docs, and client replies with zero data leak.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "keywords": [
+    "open-source-ai",
+    "freelancer",
+    "ollama",
+    "llama3",
+    "render",
+    "backboard",
+    "mastra",
+    "hacktoberfest"
+  ],
+  "author": "Hacktoberfest Builder",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "@mastra/core": "^1.77.0",
+    "backboard-sdk": "^1.5.19"
+  }
+}
