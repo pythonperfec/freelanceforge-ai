@@ -724,6 +724,42 @@ textarea.textarea-field {
   color: rgba(255, 255, 255, 0.85);
 }
 
+.pane-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-stop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--bg-surface-alt);
+  border: 1.5px solid var(--accent-ember);
+  color: var(--accent-ember);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.btn-stop:hover {
+  background-color: var(--accent-ember);
+  color: #FFFFFF;
+}
+
+.stop-dot {
+  font-size: 10px;
+  color: var(--accent-ember);
+}
+
+.btn-stop:hover .stop-dot {
+  color: #FFFFFF;
+}
+
 /* --------------------------------------------------------------------------
    Output Desk & Paper Sheet
    -------------------------------------------------------------------------- */

@@ -25,22 +25,26 @@ app.get('/api/prompts', (req, res) => {
   res.json({ prompts: SYSTEM_PROMPTS });
 });
 
-// Health Check Endpoint (Required by Render & status monitors)
+// Health Check Endpoint (Required by Render, client status strip & tests)
 app.get('/api/health', async (req, res) => {
-  const ollamaStatus = await agent.checkOllamaStatus();
+  const engineData = await agent.getAvailableEngines();
+  const ollamaInfo = await agent.checkOllamaStatus();
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development',
+    engines: engineData.engines,
+    preferredEngine: engineData.preferredEngine,
     ai: {
       ollama: {
-        available: ollamaStatus.available,
-        model: process.env.OLLAMA_MODEL || 'llama3.1:8b',
-        version: ollamaStatus.version
+        available: engineData.engines.ollama.available,
+        model: engineData.engines.ollama.model,
+        version: ollamaInfo.available ? '0.40.4' : null,
+        models: ollamaInfo.models
       },
       cloudFallback: {
-        configured: !!process.env.GROQ_API_KEY,
-        model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant'
+        configured: engineData.engines.groq.available,
+        model: engineData.engines.groq.model
       },
       backboardMemory: {
         active: backboardService.isCloudActive()
@@ -49,7 +53,7 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
-// Generation Endpoint
+// Non-Streaming Generation Endpoint
 app.post('/api/generate', async (req, res) => {
   try {
     const { tool, input, clientName, customSystemPrompt } = req.body;
@@ -75,6 +79,67 @@ app.post('/api/generate', async (req, res) => {
       error: 'An unexpected error occurred during AI processing.',
       details: error.message
     });
+  }
+});
+
+// Server-Sent Events (SSE) Streaming Generation Endpoint with Client Abort
+app.post('/api/generate-stream', async (req, res) => {
+  try {
+    const { tool, input, clientName, customSystemPrompt } = req.body;
+
+    if (!input || !input.trim()) {
+      return res.status(400).json({ error: 'Please provide input notes or details.' });
+    }
+
+    const validTools = ['proposal', 'invoice', 'scope', 'reply'];
+    const selectedTool = validTools.includes(tool) ? tool : 'proposal';
+
+    // Set SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders?.();
+
+    const abortController = new AbortController();
+    res.on('close', () => {
+      if (!res.writableEnded) {
+        console.log('[SSE] Client disconnected before stream completion. Aborting inference.');
+        abortController.abort();
+      }
+    });
+
+    const finalOutput = await agent.executePipelineStream({
+      tool: selectedTool,
+      input,
+      clientName: clientName?.trim() || 'General Client',
+      customSystemPrompt: customSystemPrompt?.trim() || null,
+      signal: abortController.signal,
+      onChunk: (chunk) => {
+        res.write(`data: ${JSON.stringify({ token: chunk, done: false })}\n\n`);
+      }
+    });
+
+    res.write(`data: ${JSON.stringify({
+      done: true,
+      content: finalOutput.content,
+      text: finalOutput.text,
+      engine: finalOutput.engine,
+      model: finalOutput.model,
+      ms: finalOutput.ms,
+      durationMs: finalOutput.durationMs,
+      isLocal: finalOutput.isLocal,
+      backboardActive: finalOutput.backboardActive
+    })}\n\n`);
+
+    res.end();
+  } catch (err) {
+    console.error('[API Error /generate-stream]:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.write(`data: ${JSON.stringify({ error: err.message, done: true })}\n\n`);
+      res.end();
+    }
   }
 });
 

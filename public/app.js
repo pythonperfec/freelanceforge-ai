@@ -230,6 +230,8 @@ class WorkspaceController {
     this.rawInput = document.getElementById('raw-input');
     this.btnForge = document.getElementById('btn-forge');
     this.btnForgeLabel = document.getElementById('btn-forge-label');
+    this.btnStopForge = document.getElementById('btn-stop-forge');
+    this.currentAbortController = null;
     this.privacyStatusText = document.getElementById('privacy-status-text');
 
     // Voice Note controls
@@ -310,7 +312,13 @@ class WorkspaceController {
           }, 1400);
         }
       });
+    // Stop active generation button
+    if (this.btnStopForge) {
+      this.btnStopForge.addEventListener('click', () => {
+        this.stopForge();
+      });
     }
+
     // Theme toggle
     this.themeToggleBtn.addEventListener('click', () => {
       this.toggleTheme();
@@ -658,30 +666,9 @@ class WorkspaceController {
       const res = await fetch('/api/health');
       if (res.ok) {
         const data = await res.json();
-        const isOllama = data.ai?.ollama?.available;
-        const isCloud = data.ai?.cloudFallback?.configured;
-
-        if (isOllama) {
-          this.engineDot.style.backgroundColor = 'var(--status-green)';
-          this.engineLabel.textContent = 'local (Llama 3.1)';
-          this.statusModel.textContent = data.ai.ollama.model || 'llama3.1:8b';
-          this.statusSource.textContent = 'local (on device)';
-          this.privacyStatusText.textContent = 'Local-first: text remains on your hardware';
-          this.statusNote.textContent = '100% on-device • zero third-party telemetry';
-        } else if (isCloud) {
-          this.engineDot.style.backgroundColor = 'var(--accent-ember)';
-          this.engineLabel.textContent = 'hosted fallback';
-          this.statusModel.textContent = data.ai.cloudFallback.model || 'llama-3.1-8b';
-          this.statusSource.textContent = 'hosted fallback (Render)';
-          this.privacyStatusText.textContent = 'Hosted demo: queries open-weight Llama 3.1';
-          this.statusNote.textContent = 'Hosted demo endpoint • identical open weights';
-        } else {
-          this.engineDot.style.backgroundColor = 'var(--status-green)';
-          this.engineLabel.textContent = 'local ready';
-          this.statusModel.textContent = 'llama3.1:8b';
-          this.statusSource.textContent = 'local synthesis';
-          this.privacyStatusText.textContent = 'Local simulation: data stays on machine';
-        }
+        const preferred = data.preferredEngine || (data.ai?.ollama?.available ? 'ollama' : (data.ai?.cloudFallback?.configured ? 'groq' : 'synthesizer'));
+        const modelName = data.engines?.[preferred]?.model || data.ai?.ollama?.model || 'llama3.1:8b';
+        this.updateStatusDisplay(preferred, modelName, null);
 
         if (data.ai?.backboardMemory?.active) {
           this.statusMemory.textContent = 'backboard cloud';
@@ -691,6 +678,35 @@ class WorkspaceController {
       }
     } catch {
       this.engineLabel.textContent = 'offline mode';
+    }
+  }
+
+  updateStatusDisplay(engine, modelName, latencyMs) {
+    if (engine === 'ollama') {
+      this.engineDot.style.backgroundColor = 'var(--status-green)';
+      this.engineLabel.textContent = 'local (Llama 3.1)';
+      this.statusModel.textContent = modelName || 'llama3.1:8b';
+      this.statusSource.textContent = 'local (on device)';
+      this.privacyStatusText.textContent = '100% local: Llama 3.1 inference running on your hardware';
+      this.statusNote.textContent = '100% on-device • zero third-party telemetry';
+    } else if (engine === 'groq') {
+      this.engineDot.style.backgroundColor = 'var(--accent-ember)';
+      this.engineLabel.textContent = 'hosted (Groq)';
+      this.statusModel.textContent = modelName || 'llama-3.1-8b-instant';
+      this.statusSource.textContent = 'hosted fallback (Groq)';
+      this.privacyStatusText.textContent = 'Hosted demo: open-weight Llama 3.1 on Groq Cloud';
+      this.statusNote.textContent = 'Hosted open weights • fast cloud inference';
+    } else {
+      this.engineDot.style.backgroundColor = 'var(--border-color)';
+      this.engineLabel.textContent = 'local synthesis';
+      this.statusModel.textContent = modelName || 'llama3.1:8b (Local Synthesizer)';
+      this.statusSource.textContent = 'local synthesis';
+      this.privacyStatusText.textContent = 'Local synthesis: offline fallback';
+      this.statusNote.textContent = 'Local-first offline fallback';
+    }
+
+    if (latencyMs !== null && latencyMs !== undefined) {
+      this.statusLatency.textContent = `${latencyMs} ms`;
     }
   }
 
@@ -916,10 +932,25 @@ class WorkspaceController {
 
     // Set UI to loading state
     this.setLoadingState(true);
+    this.currentAbortController = new AbortController();
+    this.currentOutputMarkdown = '';
+
+    // Initialize document header on paper sheet
+    const tool = TOOLS[this.currentTool];
+    this.docTypeLabel.textContent = tool.docType;
+    this.docClientLabel.textContent = `Client: ${clientName}`;
+    const today = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    this.docDateLabel.textContent = today;
+    this.paperBody.innerHTML = '';
+    this.rawMarkdownEditor.value = '';
 
     try {
       const startTime = performance.now();
-      const response = await fetch('/api/generate', {
+      const response = await fetch('/api/generate-stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -927,29 +958,119 @@ class WorkspaceController {
           input,
           clientName,
           customSystemPrompt: this.getEffectivePrompt()
-        })
+        }),
+        signal: this.currentAbortController.signal
       });
 
       if (!response.ok) {
-        const errJson = await response.json();
-        throw new Error(errJson.error || 'Server returned an error.');
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(errJson.error || `Server returned error (${response.status})`);
       }
 
-      const data = await response.json();
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let streamMeta = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+          try {
+            const payload = JSON.parse(trimmed.slice(6));
+            if (payload.error) {
+              throw new Error(payload.error);
+            }
+            if (payload.token) {
+              this.currentOutputMarkdown += payload.token;
+
+              // Transition from loading screen to paper sheet as tokens stream in
+              if (this.paperSheet.hidden) {
+                this.sheetLoading.hidden = true;
+                this.paperSheet.hidden = false;
+              }
+
+              // Live render into paper body
+              if (window.marked) {
+                this.paperBody.innerHTML = marked.parse(this.currentOutputMarkdown);
+              } else {
+                this.paperBody.textContent = this.currentOutputMarkdown;
+              }
+              this.rawMarkdownEditor.value = this.currentOutputMarkdown;
+            }
+
+            if (payload.done) {
+              streamMeta = payload;
+            }
+          } catch (e) {
+            if (e.message && !e.message.includes('JSON')) throw e;
+          }
+        }
+      }
+
       const elapsed = Math.round(performance.now() - startTime);
 
-      // Render document with progressive typewriter simulation
-      await this.streamToPaper(data, elapsed, clientName);
+      // Final render pass
+      if (this.currentOutputMarkdown) {
+        this.sheetEmpty.hidden = true;
+        this.sheetLoading.hidden = true;
+        this.sheetError.hidden = true;
+        this.paperSheet.hidden = false;
+        if (window.marked) {
+          this.paperBody.innerHTML = marked.parse(this.currentOutputMarkdown);
+        } else {
+          this.paperBody.textContent = this.currentOutputMarkdown;
+        }
+        this.rawMarkdownEditor.value = this.currentOutputMarkdown;
+      }
+
+      // Update bottom status strip with exact API values
+      const engine = streamMeta?.engine || 'ollama';
+      const modelName = streamMeta?.model || 'llama3.1:8b';
+      const latency = streamMeta?.ms || elapsed;
+      this.updateStatusDisplay(engine, modelName, latency);
+
+      if (streamMeta?.backboardActive) {
+        this.statusMemory.textContent = 'backboard cloud';
+      }
+
+      this.setOutputTab('preview');
     } catch (err) {
-      console.error(err);
-      this.showErrorState(err.message);
+      if (err.name === 'AbortError') {
+        console.log('Streaming stopped by user.');
+        if (this.currentOutputMarkdown) {
+          this.sheetLoading.hidden = true;
+          this.paperSheet.hidden = false;
+        }
+      } else {
+        console.error(err);
+        this.showErrorState(err.message);
+      }
     } finally {
+      this.currentAbortController = null;
       this.setLoadingState(false);
     }
   }
 
+  stopForge() {
+    if (this.currentAbortController) {
+      this.currentAbortController.abort();
+    }
+    this.setLoadingState(false);
+  }
+
   setLoadingState(isLoading) {
     this.btnForge.disabled = isLoading;
+    if (this.btnStopForge) {
+      this.btnStopForge.hidden = !isLoading;
+    }
     if (isLoading) {
       this.btnForgeLabel.textContent = 'Forging...';
       if (this.sheetEmpty) this.sheetEmpty.hidden = true;
@@ -967,8 +1088,8 @@ class WorkspaceController {
       s2.classList.add('pending');
       s3.classList.add('pending');
 
-      setTimeout(() => s2.classList.remove('pending'), 400);
-      setTimeout(() => s3.classList.remove('pending'), 800);
+      setTimeout(() => s2?.classList.remove('pending'), 400);
+      setTimeout(() => s3?.classList.remove('pending'), 800);
     } else {
       this.btnForgeLabel.textContent = 'Forge Deliverable';
       if (this.sheetLoading) this.sheetLoading.hidden = true;
@@ -986,7 +1107,7 @@ class WorkspaceController {
   }
 
   async streamToPaper(data, elapsedMs, clientName) {
-    this.currentOutputMarkdown = data.content || '';
+    this.currentOutputMarkdown = data.content || data.text || '';
     const tool = TOOLS[this.currentTool];
 
     // Document header info
@@ -1000,10 +1121,12 @@ class WorkspaceController {
     this.docDateLabel.textContent = today;
 
     // Update bottom status strip with actual metrics
-    this.statusModel.textContent = data.modelUsed || 'llama3.1:8b';
-    this.statusSource.textContent = data.isLocal ? 'local (on device)' : 'hosted fallback (Render)';
-    this.statusLatency.textContent = `${data.durationMs || elapsedMs} ms`;
-    this.statusMemory.textContent = data.backboardActive ? 'backboard cloud' : 'local memory';
+    const engine = data.engine || (data.isLocal ? 'ollama' : 'groq');
+    this.updateStatusDisplay(engine, data.model || data.modelUsed, data.ms || data.durationMs || elapsedMs);
+
+    if (data.backboardActive) {
+      this.statusMemory.textContent = 'backboard cloud';
+    }
 
     // Show paper sheet and hide other states
     if (this.sheetEmpty) this.sheetEmpty.hidden = true;

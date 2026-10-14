@@ -1,20 +1,15 @@
 import { formatPrompt, SYSTEM_PROMPTS } from './prompts.js';
 import { backboardService } from '../middleware/backboard.js';
 import { generateIntelligentSynthesis } from './synthesizer.js';
+import { ollamaAvailable, ollamaChat, ollamaStream, getOllamaInfo } from './ollama.js';
 
 /**
  * Mastra Agent Harness & Open-Weight Inference Engine
  * 
- * Orchestrates:
- * 1. Backboard Client Context Enrichment
- * 2. Specialized Prompt Framing
- * 3. Local-First Open-Weight Inference (Ollama / Llama 3.1) with Cloud Fallback (Groq)
- * 4. Memory Persistence into Backboard
- * 
- * Qualifies for:
- * - Best Use of Mastra ($100)
- * - Best Use of Render ($200)
- * - Best Use of Backboard ($100)
+ * Engine selection order:
+ * 1. Local Ollama (if ollamaAvailable() is true on OLLAMA_BASE_URL)
+ * 2. Hosted open-weight endpoint (Groq Llama 3.1, if GROQ_API_KEY is configured)
+ * 3. Dynamic template synthesizer (offline resilient fallback)
  */
 export class FreelanceForgeAgent {
   constructor() {
@@ -25,28 +20,50 @@ export class FreelanceForgeAgent {
   }
 
   /**
-   * Check Ollama connectivity
+   * Check Ollama connectivity and installed models
    */
   async checkOllamaStatus() {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
-      const res = await fetch(`${this.ollamaUrl}/api/version`, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      if (res.ok) {
-        const data = await res.json();
-        return { available: true, version: data.version || 'unknown' };
-      }
-    } catch {
-      // Not reachable
-    }
-    return { available: false, version: null };
+    return await getOllamaInfo();
   }
 
   /**
-   * Main generation pipeline
+   * Determine available engines and preferred engine
    */
-  async executePipeline({ tool, input, clientName, customSystemPrompt }) {
+  async getAvailableEngines() {
+    const isOllama = await ollamaAvailable();
+    const isGroq = !!this.groqApiKey;
+
+    let preferredEngine = 'synthesizer';
+    if (isOllama) {
+      preferredEngine = 'ollama';
+    } else if (isGroq) {
+      preferredEngine = 'groq';
+    }
+
+    return {
+      engines: {
+        ollama: {
+          available: isOllama,
+          model: this.ollamaModel,
+          url: this.ollamaUrl
+        },
+        groq: {
+          available: isGroq,
+          model: this.groqModel
+        },
+        synthesizer: {
+          available: true,
+          model: `${this.ollamaModel} (Local Synthesizer)`
+        }
+      },
+      preferredEngine
+    };
+  }
+
+  /**
+   * Main non-streaming pipeline execution
+   */
+  async executePipeline({ tool, input, clientName, customSystemPrompt, signal }) {
     const startTime = Date.now();
 
     // Step 1: Memory & Context Retrieval via Backboard
@@ -62,47 +79,30 @@ export class FreelanceForgeAgent {
     // Step 2: Prompt Formatting (supports user-edited system prompt)
     const { system, user } = formatPrompt(tool, input, clientContext, customSystemPrompt);
 
-    // Step 3: Inference Dispatch (Local Ollama -> Cloud Groq Fallback -> Smart Synthesizer)
+    // Step 3: Engine Selection
     let result = null;
-    let provider = 'ollama';
-    let modelUsed = this.ollamaModel;
+    let engine = 'synthesizer';
+    let model = `${this.ollamaModel} (Local Synthesizer)`;
     let isLocal = true;
 
-    // 3a: Try Local Ollama First
-    const ollamaStatus = await this.checkOllamaStatus();
-    if (ollamaStatus.available) {
+    // 3a. Priority 1: Ollama if available
+    const hasOllama = await ollamaAvailable();
+    if (hasOllama) {
       try {
-        console.log(`[Inference] Dispatching to Local Ollama (${this.ollamaModel})...`);
-        const res = await fetch(`${this.ollamaUrl}/api/chat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: this.ollamaModel,
-            messages: [
-              { role: 'system', content: system },
-              { role: 'user', content: user }
-            ],
-            stream: false
-          })
-        });
-
-        if (res.ok) {
-          const json = await res.json();
-          result = json.message?.content || json.response;
-        }
+        console.log(`[Engine] Selecting Priority 1: Local Ollama (${this.ollamaModel})...`);
+        result = await ollamaChat(system, user, { signal });
+        engine = 'ollama';
+        model = this.ollamaModel;
+        isLocal = true;
       } catch (err) {
-        console.warn(`[Inference] Ollama local call failed: ${err.message}. Trying cloud fallback.`);
+        console.warn(`[Engine] Ollama call failed: ${err.message}. Cascading to next provider.`);
       }
     }
 
-    // 3b: Try Cloud Groq Open-Weight Fallback (Used on Render deployment)
+    // 3b. Priority 2: Hosted open-weight endpoint (Groq) if configured
     if (!result && this.groqApiKey) {
       try {
-        console.log(`[Inference] Dispatching to Cloud Groq Fallback (${this.groqModel})...`);
-        provider = 'groq';
-        modelUsed = `${this.groqModel} (Groq Cloud)`;
-        isLocal = false;
-
+        console.log(`[Engine] Selecting Priority 2: Hosted Groq (${this.groqModel})...`);
         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -115,30 +115,32 @@ export class FreelanceForgeAgent {
               { role: 'system', content: system },
               { role: 'user', content: user }
             ],
-            temperature: 0.3
-          })
+            temperature: 0.4
+          }),
+          signal: signal || AbortSignal.timeout(60000)
         });
 
         if (res.ok) {
           const json = await res.json();
           result = json.choices?.[0]?.message?.content;
+          engine = 'groq';
+          model = `${this.groqModel} (Groq Cloud)`;
+          isLocal = false;
         } else {
-          console.warn(`[Inference] Groq returned error status: ${res.status}`);
+          console.warn(`[Engine] Groq returned status ${res.status}. Cascading to fallback.`);
         }
       } catch (err) {
-        console.warn(`[Inference] Groq fallback failed: ${err.message}`);
+        console.warn(`[Engine] Groq call failed: ${err.message}. Cascading to fallback.`);
       }
     }
 
-    // 3c: Dynamic Generative Synthesizer
-    // Genuinely parses the user's actual requirements, deliverables, timeline, and budget
-    // rather than outputting a static boilerplate template.
+    // 3c. Priority 3: Dynamic template synthesizer as last-resort fallback
     if (!result) {
-      console.log(`[Inference] Running dynamic generative synthesis for [${tool}]...`);
-      provider = 'local-synthesizer';
-      modelUsed = `${this.ollamaModel} (Dynamic Synthesis)`;
-      isLocal = true;
+      console.log(`[Engine] Selecting Priority 3: Dynamic Template Synthesizer...`);
       result = generateIntelligentSynthesis(tool, input, clientName, customSystemPrompt);
+      engine = 'synthesizer';
+      model = `${this.ollamaModel} (Local Synthesizer)`;
+      isLocal = true;
     }
 
     const durationMs = Date.now() - startTime;
@@ -154,8 +156,10 @@ export class FreelanceForgeAgent {
 
     return {
       content: result,
-      provider,
-      modelUsed,
+      text: result,
+      engine,
+      model,
+      ms: durationMs,
       durationMs,
       isLocal,
       backboardActive: backboardService.isCloudActive()
@@ -163,8 +167,149 @@ export class FreelanceForgeAgent {
   }
 
   /**
-   * Generates tailored, dynamic content parsing actual client notes and parameters
+   * Streaming pipeline execution
    */
+  async executePipelineStream({ tool, input, clientName, customSystemPrompt, onChunk, signal }) {
+    const startTime = Date.now();
+
+    // Step 1: Memory & Context Retrieval
+    let clientContext = null;
+    if (clientName) {
+      try {
+        clientContext = await backboardService.getClientContext(clientName);
+      } catch (err) {
+        console.warn(`[Pipeline Step 1] Backboard lookup warning: ${err.message}`);
+      }
+    }
+
+    // Step 2: Prompt Formatting
+    const { system, user } = formatPrompt(tool, input, clientContext, customSystemPrompt);
+
+    // Step 3: Engine Selection
+    let accumulated = '';
+    let engine = 'synthesizer';
+    let model = `${this.ollamaModel} (Local Synthesizer)`;
+    let isLocal = true;
+
+    // 3a. Priority 1: Ollama Streaming
+    const hasOllama = await ollamaAvailable();
+    if (hasOllama) {
+      try {
+        console.log(`[Stream] Selecting Priority 1: Local Ollama Stream (${this.ollamaModel})...`);
+        accumulated = await ollamaStream(system, user, (chunk) => {
+          if (typeof onChunk === 'function') onChunk(chunk);
+        }, { signal });
+
+        engine = 'ollama';
+        model = this.ollamaModel;
+        isLocal = true;
+      } catch (err) {
+        console.warn(`[Stream] Ollama streaming failed: ${err.message}. Cascading to fallback.`);
+        accumulated = '';
+      }
+    }
+
+    // 3b. Priority 2: Groq Streaming
+    if (!accumulated && this.groqApiKey) {
+      try {
+        console.log(`[Stream] Selecting Priority 2: Groq Streaming (${this.groqModel})...`);
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.groqApiKey}`
+          },
+          body: JSON.stringify({
+            model: this.groqModel,
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: user }
+            ],
+            temperature: 0.4,
+            stream: true
+          }),
+          signal: signal || AbortSignal.timeout(60000)
+        });
+
+        if (res.ok) {
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || trimmed === 'data: [DONE]') continue;
+              if (trimmed.startsWith('data: ')) {
+                try {
+                  const json = JSON.parse(trimmed.slice(6));
+                  const delta = json.choices?.[0]?.delta?.content || '';
+                  if (delta) {
+                    accumulated += delta;
+                    if (typeof onChunk === 'function') onChunk(delta);
+                  }
+                } catch {}
+              }
+            }
+          }
+          engine = 'groq';
+          model = `${this.groqModel} (Groq Cloud)`;
+          isLocal = false;
+        }
+      } catch (err) {
+        console.warn(`[Stream] Groq streaming failed: ${err.message}. Cascading to fallback.`);
+        accumulated = '';
+      }
+    }
+
+    // 3c. Priority 3: Synthesizer Streaming (Progressive chunk emission)
+    if (!accumulated) {
+      console.log(`[Stream] Selecting Priority 3: Synthesizer Progressive Emission...`);
+      accumulated = generateIntelligentSynthesis(tool, input, clientName, customSystemPrompt);
+      engine = 'synthesizer';
+      model = `${this.ollamaModel} (Local Synthesizer)`;
+      isLocal = true;
+
+      // Emit in realistic progressive chunks (lines)
+      const lines = accumulated.split('\n');
+      for (let i = 0; i < lines.length; i++) {
+        if (signal?.aborted) break;
+        const lineChunk = (i === 0 ? '' : '\n') + lines[i];
+        if (typeof onChunk === 'function') onChunk(lineChunk);
+        // Micro pause to give real progressive feel
+        await new Promise(r => setTimeout(r, 25));
+      }
+    }
+
+    const durationMs = Date.now() - startTime;
+
+    // Step 4: Persist Interaction to Backboard
+    if (clientName && accumulated) {
+      try {
+        await backboardService.saveClientInteraction(clientName, tool, input, accumulated);
+      } catch (err) {
+        console.warn(`[Pipeline Step 4] Backboard persistence warning: ${err.message}`);
+      }
+    }
+
+    return {
+      content: accumulated,
+      text: accumulated,
+      engine,
+      model,
+      ms: durationMs,
+      durationMs,
+      isLocal,
+      backboardActive: backboardService.isCloudActive()
+    };
+  }
+
   generateDemoFallback(tool, input, clientName = 'Acme Corp', customSystemPrompt = null) {
     return generateIntelligentSynthesis(tool, input, clientName, customSystemPrompt);
   }

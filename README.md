@@ -74,14 +74,33 @@ graph TD
 
 ## 🚀 Quick Start (Local Setup)
 
-### 1. Prerequisites
-- **Node.js 18+** installed (`node -v`)
-- **Ollama** installed from [ollama.ai](https://ollama.ai) (optional for local inference)
+### 1. Prerequisites & Ollama Setup
 
+FreelanceForge AI is designed to run 100% locally with open-weight models.
+
+#### Install Ollama:
+- **Windows (PowerShell):**
+  ```powershell
+  irm https://ollama.com/install.ps1 | iex
+  ```
+- **macOS / Linux:**
+  ```bash
+  curl -fsSL https://ollama.com/install.sh | sh
+  ```
+- Or download the installer directly from [ollama.com/download](https://ollama.com/download).
+
+#### Pull the Open-Weight Model:
 ```bash
-# Pull the open-weight model
 ollama pull llama3.1:8b
 ```
+
+#### Verify Ollama is Ready:
+```bash
+curl http://localhost:11434/api/tags
+```
+If `llama3.1:8b` appears in the list, local inference is ready.
+
+---
 
 ### 2. Clone & Install
 ```bash
@@ -94,13 +113,24 @@ npm install
 ```bash
 cp .env.example .env
 ```
-*(Optional)* Add your `BACKBOARD_API_KEY` or `GROQ_API_KEY` for cloud fallbacks.
+*(Optional)* Add your `BACKBOARD_API_KEY` or `GROQ_API_KEY` for cloud fallbacks or hosted demos.
 
-### 4. Run Locally
+### 4. Run Tests
+Validate the multi-tier engine selection priority (Ollama -> Groq -> Synthesizer):
+```bash
+npm test
+```
+
+### 5. Start the Server
 ```bash
 npm start
 ```
-Open **[http://localhost:3000](http://localhost:3000)** in your browser!
+Visit **[http://localhost:3000](http://localhost:3000)** in your browser!
+
+You can also check the live engine health status anytime at:
+```bash
+curl http://localhost:3000/api/health
+```
 
 ---
 
