@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: freelanceforge-ai
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: PORT
+        value: 10000
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: BACKBOARD_API_KEY
+        sync: false
+      - key: BACKBOARD_PROJECT_ID
+        value: freelanceforge-production
