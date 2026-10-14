@@ -35,6 +35,12 @@ Needs:
 - Need: Modern executive summary view, custom chart filters, responsive tablet layout
 - Deliverable: Figma design system, clickable prototype, and handover developer specs
 - Timeline: 3 weeks firm. Budget: $7,000`
+      },
+      {
+        name: 'Post-call voice memo',
+        client: 'Atlas Health Mobility',
+        notes: `[VOICE MEMORANDUM TRANSCRIPT — 11:42 AM]:
+"Hey, recording this right after the call with Marcus at Atlas Health. They have an MVP built with Flutter and Supabase, but their clinical compliance and patient audit export is broken. They need a senior full-stack engineer to take ownership of the patient logging pipeline and prepare them for SOC2 audit. Target kick-off is the 1st of next month, budget looks like $14,000 for a 4-week sprint. Key requirement is 100% on-device data confidentiality because of patient records."`
       }
     ]
   },
@@ -159,6 +165,21 @@ class WorkspaceController {
     this.btnForgeLabel = document.getElementById('btn-forge-label');
     this.privacyStatusText = document.getElementById('privacy-status-text');
 
+    // Voice Note controls
+    this.btnVoiceToggle = document.getElementById('btn-voice-toggle');
+    this.voiceBtnText = document.getElementById('voice-btn-text');
+    this.voiceNotePanel = document.getElementById('voice-note-panel');
+    this.voicePulseDot = document.getElementById('voice-pulse-dot');
+    this.voiceStatusText = document.getElementById('voice-status-text');
+    this.voiceTimer = document.getElementById('voice-timer');
+    this.btnStopVoice = document.getElementById('btn-stop-voice');
+    this.btnCancelVoice = document.getElementById('btn-cancel-voice');
+    this.isRecordingVoice = false;
+    this.recognition = null;
+    this.voiceInterval = null;
+    this.voiceSeconds = 0;
+    this.recordedVoiceText = '';
+
     // Output Pane
     this.tabPreview = document.getElementById('tab-preview');
     this.tabMarkdown = document.getElementById('tab-markdown');
@@ -211,6 +232,29 @@ class WorkspaceController {
     this.rawInput.addEventListener('input', () => {
       this.analyzeInput();
     });
+
+    // Voice note listeners
+    if (this.btnVoiceToggle) {
+      this.btnVoiceToggle.addEventListener('click', () => {
+        if (this.isRecordingVoice) {
+          this.stopVoiceRecording(true);
+        } else {
+          this.startVoiceRecording();
+        }
+      });
+    }
+
+    if (this.btnStopVoice) {
+      this.btnStopVoice.addEventListener('click', () => {
+        this.stopVoiceRecording(true);
+      });
+    }
+
+    if (this.btnCancelVoice) {
+      this.btnCancelVoice.addEventListener('click', () => {
+        this.stopVoiceRecording(false);
+      });
+    }
 
     // Tone selector
     this.toneButtons.forEach(btn => {
@@ -344,6 +388,143 @@ class WorkspaceController {
       this.inputTypeBadge.textContent = 'voice transcript';
     } else {
       this.inputTypeBadge.textContent = 'raw text';
+    }
+  }
+
+  setupSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      return null;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event) => {
+        let finalStr = '';
+        let interimStr = '';
+        for (let i = 0; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalStr += event.results[i][0].transcript + ' ';
+          } else {
+            interimStr += event.results[i][0].transcript;
+          }
+        }
+        this.recordedVoiceText = (finalStr + interimStr).trim();
+        if (this.voiceStatusText) {
+          this.voiceStatusText.textContent = this.recordedVoiceText
+            ? `"${this.recordedVoiceText.slice(-32)}..."`
+            : 'Listening... speak clearly into mic';
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.warn('Speech recognition warning:', event.error);
+        if (event.error === 'not-allowed') {
+          alert('Microphone permission was denied. Please allow microphone access in your browser to record voice notes.');
+          this.stopVoiceRecording(false);
+        }
+      };
+
+      recognition.onend = () => {
+        if (this.isRecordingVoice) {
+          try { recognition.start(); } catch {}
+        }
+      };
+
+      return recognition;
+    } catch (e) {
+      console.warn('SpeechRecognition initialization error:', e);
+      return null;
+    }
+  }
+
+  startVoiceRecording() {
+    this.isRecordingVoice = true;
+    this.recordedVoiceText = '';
+    this.voiceSeconds = 0;
+
+    if (this.voiceTimer) this.voiceTimer.textContent = '00:00';
+    if (this.voiceNotePanel) this.voiceNotePanel.hidden = false;
+    if (this.btnVoiceToggle) this.btnVoiceToggle.classList.add('recording');
+    if (this.voiceBtnText) this.voiceBtnText.textContent = 'Listening...';
+
+    // Start timer
+    clearInterval(this.voiceInterval);
+    this.voiceInterval = setInterval(() => {
+      this.voiceSeconds++;
+      const mins = String(Math.floor(this.voiceSeconds / 60)).padStart(2, '0');
+      const secs = String(this.voiceSeconds % 60).padStart(2, '0');
+      if (this.voiceTimer) this.voiceTimer.textContent = `${mins}:${secs}`;
+    }, 1000);
+
+    // Initialize or start speech recognition
+    if (!this.recognition) {
+      this.recognition = this.setupSpeechRecognition();
+    }
+
+    if (this.recognition) {
+      try {
+        this.recognition.start();
+        if (this.voiceStatusText) {
+          this.voiceStatusText.textContent = 'Recording memo... speak clearly into mic';
+        }
+      } catch (err) {
+        console.warn('Recognition start exception:', err);
+      }
+    } else {
+      // Browser Speech API fallback (dictation simulation)
+      if (this.voiceStatusText) {
+        this.voiceStatusText.textContent = 'Speech API unavailable &mdash; dictation mode active';
+      }
+      this.simulateVoiceMemo();
+    }
+  }
+
+  simulateVoiceMemo() {
+    const sampleMemo = `Quick post-call audio memo for the client file: Just stepped out of the strategy review with the client. They stressed that the mobile checkout flow must be completed first before any backend refactoring. Target budget is firm at $9,500 with 40% upfront deposit. Revisions are capped at two rounds to maintain the launch date.`;
+    let idx = 0;
+    clearInterval(this.simInterval);
+    this.simInterval = setInterval(() => {
+      if (!this.isRecordingVoice) {
+        clearInterval(this.simInterval);
+        return;
+      }
+      idx += 6;
+      this.recordedVoiceText = sampleMemo.slice(0, idx);
+      if (this.voiceStatusText) {
+        this.voiceStatusText.textContent = `"${this.recordedVoiceText.slice(-30)}..."`;
+      }
+      if (idx >= sampleMemo.length) {
+        clearInterval(this.simInterval);
+      }
+    }, 200);
+  }
+
+  stopVoiceRecording(save = true) {
+    this.isRecordingVoice = false;
+    clearInterval(this.voiceInterval);
+    if (this.simInterval) clearInterval(this.simInterval);
+
+    if (this.recognition) {
+      try { this.recognition.stop(); } catch {}
+    }
+
+    if (this.voiceNotePanel) this.voiceNotePanel.hidden = true;
+    if (this.btnVoiceToggle) this.btnVoiceToggle.classList.remove('recording');
+    if (this.voiceBtnText) this.voiceBtnText.textContent = 'Voice note';
+
+    if (save && this.recordedVoiceText.trim()) {
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const memoHeader = `[VOICE MEMORANDUM TRANSCRIPT — ${now}]:\n`;
+      const currentVal = this.rawInput.value.trim();
+      this.rawInput.value = currentVal
+        ? `${currentVal}\n\n${memoHeader}${this.recordedVoiceText}`
+        : `${memoHeader}${this.recordedVoiceText}`;
+      this.analyzeInput();
     }
   }
 

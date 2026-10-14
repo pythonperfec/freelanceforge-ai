@@ -122,10 +122,33 @@
           <div class="label-with-meta">
             <label for="raw-input" class="field-label" id="input-label">Raw Notes or Client Message</label>
             <div class="input-meta">
+              <button type="button" class="btn-voice-toggle" id="btn-voice-toggle" title="Record or dictate audio voice note">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" y1="19" x2="12" y2="23"/>
+                  <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+                <span id="voice-btn-text">Voice note</span>
+              </button>
               <span class="input-type-badge" id="input-type-badge">raw notes</span>
               <span class="word-counter" id="word-counter">0 words</span>
             </div>
           </div>
+
+          <!-- Voice Note Active Panel -->
+          <div class="voice-note-panel" id="voice-note-panel" hidden>
+            <div class="voice-panel-left">
+              <span class="voice-pulse-dot" id="voice-pulse-dot"></span>
+              <span class="voice-status-text" id="voice-status-text">Recording memo... speak clearly</span>
+              <span class="voice-timer" id="voice-timer">00:00</span>
+            </div>
+            <div class="voice-panel-right">
+              <button type="button" class="btn-voice-action stop" id="btn-stop-voice">Stop &amp; Append</button>
+              <button type="button" class="btn-voice-action cancel" id="btn-cancel-voice">Cancel</button>
+            </div>
+          </div>
+
           <textarea id="raw-input" class="field-input textarea-field" placeholder="Paste your rough notes, audio transcript, or client email here..."></textarea>
         </div>
 

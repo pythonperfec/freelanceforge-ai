@@ -418,6 +418,112 @@ body {
   border-radius: var(--radius-xs);
 }
 
+/* Voice Note Dictation Controls */
+.btn-voice-toggle {
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  color: var(--color-ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.btn-voice-toggle:hover {
+  border-color: var(--accent-ember);
+  color: var(--accent-ember);
+}
+
+.btn-voice-toggle.recording {
+  background-color: var(--accent-ember-soft);
+  border-color: var(--accent-ember);
+  color: var(--accent-ember);
+  font-weight: 600;
+}
+
+.voice-note-panel {
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.voice-panel-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.voice-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-ember);
+  animation: pulse-voice 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse-voice {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.voice-status-text {
+  color: var(--color-ink);
+}
+
+.voice-timer {
+  color: var(--accent-ember);
+  font-weight: 600;
+}
+
+.voice-panel-right {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-voice-action {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  transition: all 0.12s ease;
+}
+
+.btn-voice-action.stop {
+  background-color: var(--accent-ember);
+  border-color: var(--accent-ember);
+  color: #FFFFFF;
+}
+
+.btn-voice-action.stop:hover {
+  background-color: var(--accent-ember-hover);
+}
+
+.btn-voice-action.cancel {
+  background: transparent;
+  color: var(--color-ink-muted);
+}
+
+.btn-voice-action.cancel:hover {
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+}
+
 .field-input {
   width: 100%;
   background-color: var(--bg-input);
