@@ -778,21 +778,53 @@ textarea.textarea-field {
   gap: 6px;
 }
 
-/* Sheet Viewport */
+/* Pretext Guidance Card */
+.pretext-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background-color: var(--bg-surface-alt);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.pretext-icon {
+  color: var(--accent-ember);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.pretext-heading {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--accent-ember);
+  margin-bottom: 2px;
+}
+
+.pretext-text {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+  line-height: 1.45;
+}
+
+/* Sheet Viewport — block scrolling so paper sheet can grow to 100% of text height */
 .sheet-viewport {
   flex: 1;
   overflow-y: auto;
-  padding: 32px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 32px 32px 64px 32px;
+  display: block;
 }
 
 /* Empty State */
 .sheet-empty {
-  margin: auto;
+  margin: 40px auto;
   text-align: center;
-  max-width: 360px;
+  max-width: 380px;
   color: var(--color-ink-muted);
 }
 
@@ -821,13 +853,116 @@ textarea.textarea-field {
   color: var(--color-ink-faint);
 }
 
+/* Jargon / Gibberish Error Sheet */
+.jargon-alert-sheet {
+  max-width: 620px;
+  margin: 24px auto;
+  background-color: var(--bg-surface);
+  border: 2px solid var(--accent-ember);
+  border-radius: var(--radius-sm);
+  padding: 32px;
+  text-align: center;
+  box-shadow: 3px 3px 0px var(--accent-ember);
+}
+
+.jargon-icon-box {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 12px auto;
+  background-color: var(--accent-ember-soft);
+  border: 1.5px solid var(--accent-ember);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-ember);
+}
+
+.jargon-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+}
+
+.jargon-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  background-color: var(--accent-ember);
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.jargon-desc {
+  font-size: 13px;
+  color: var(--color-ink-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.jargon-sample-box {
+  background-color: var(--bg-input);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-xs);
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.jargon-sample-label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  margin-bottom: 2px;
+}
+
+.jargon-sample-code {
+  color: var(--accent-ember);
+  word-break: break-all;
+}
+
+.jargon-guide-card {
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xs);
+  padding: 12px 16px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.guide-title {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.guide-list {
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--color-ink-muted);
+  line-height: 1.55;
+}
+
 /* Loading State (Progressive Terminal Streaming) */
 .sheet-loading {
   width: 100%;
   max-width: 720px;
-  margin: auto;
+  margin: 32px auto;
   background-color: var(--bg-surface);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 24px;
 }
@@ -871,7 +1006,7 @@ textarea.textarea-field {
 
 /* Error State */
 .sheet-error {
-  margin: auto;
+  margin: 32px auto;
   text-align: center;
   max-width: 400px;
   padding: 32px;
@@ -896,18 +1031,43 @@ textarea.textarea-field {
 }
 
 /* --------------------------------------------------------------------------
-   The Paper Document Sheet
+   The Paper Document Sheet (Fully wraps all generated content)
    -------------------------------------------------------------------------- */
 .paper-sheet {
+  position: relative;
   width: 100%;
-  max-width: 760px;
+  max-width: 780px;
+  margin: 0 auto 48px auto;
   background-color: var(--bg-paper);
   color: #1D1A16; /* Always readable dark ink on paper */
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 48px 56px;
+  padding: 48px 56px 64px 56px;
   box-sizing: border-box;
-  min-height: 700px;
+  display: block;
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  box-shadow: 2px 3px 0px rgba(29, 26, 22, 0.1);
+}
+
+/* Tactile Paper Stamp */
+.paper-stamp {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  border: 1.5px dashed #C8431B;
+  color: #C8431B;
+  padding: 3px 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: rotate(3deg);
+  border-radius: var(--radius-xs);
+  background-color: rgba(200, 67, 27, 0.05);
+  pointer-events: none;
 }
 
 .paper-header {

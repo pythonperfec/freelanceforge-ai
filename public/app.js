@@ -5,6 +5,7 @@
  */
 
 // Tool definitions and sample scenarios
+// Tool definitions, pretext instructions, clean starter outlines, and jargon guide points
 const TOOLS = {
   proposal: {
     index: '01',
@@ -12,35 +13,53 @@ const TOOLS = {
     subtitle: 'Turn raw meeting bullets or voice notes into a structured, client-ready proposal.',
     docType: 'PROJECT PROPOSAL',
     inputLabel: 'Raw Meeting Notes or Client Brief',
-    placeholder: 'Paste your messy meeting bullets, audio transcript, or client goals here...',
-    defaultClient: 'Nexus Interactive',
-    samples: [
+    placeholder: 'Paste your client requirements, goals, timeline, and budget notes here...',
+    pretextHeading: 'Proposal Draft Guide',
+    pretextText: 'Enter your client’s problem, desired deliverables, target launch date, and budget. Columns start clean so you can type freely or click a starter outline below.',
+    guidePoints: [
+      { bold: 'Client & Objective:', text: 'What problem is the client trying to solve?' },
+      { bold: 'Key Deliverables:', text: 'e.g., website redesign, backend API, MVP build.' },
+      { bold: 'Timeline & Milestones:', text: 'Target launch week, phases, or review dates.' },
+      { bold: 'Budget & Payment:', text: 'Estimated quote, hourly rate, or milestone deposits.' }
+    ],
+    outlines: [
       {
-        name: 'E-commerce migration',
-        client: 'Velvet & Vine Boutique',
-        notes: `Met with Sarah (Founder). Current WooCommerce store is sluggish, losing mobile checkouts.
-Needs:
-- Migration to modern Shopify Plus or Next.js headless storefront
-- Sync with Klaviyo email marketing and inventory ERP
-- High-converting mobile drawer cart and 1-click Apple Pay
-- Speed audit: wants sub-second Lighthouse scores
-- Timeline: Needs launch before Black Friday / Cyber Monday (6 weeks)
-- Budget discussed: Around $8,500 - $12,000`
+        name: '+ Deliverables outline',
+        template: `Project Goal:
+- 
+
+Key Deliverables:
+- 
+- 
+
+Target Timeline & Milestones:
+- Phase 1: 
+- Phase 2: 
+
+Estimated Budget & Terms:
+- Budget: $`
       },
       {
-        name: 'SaaS design sprint',
-        client: 'CloudTrace Analytics',
-        notes: `Founders need complete redesign of analytics dashboard before Series A pitch.
-- Current UI is cluttered table view with poor information hierarchy
-- Need: Modern executive summary view, custom chart filters, responsive tablet layout
-- Deliverable: Figma design system, clickable prototype, and handover developer specs
-- Timeline: 3 weeks firm. Budget: $7,000`
+        name: '+ 3-Phase roadmap',
+        template: `Objective:
+- 
+
+Phase 1 (Discovery & Architecture):
+- 
+
+Phase 2 (Engineering & Integrations):
+- 
+
+Phase 3 (Testing & Launch):
+- 
+
+Payment Schedule:
+- 50% Deposit upon signing
+- 50% Upon production launch`
       },
       {
-        name: 'Post-call voice memo',
-        client: 'Atlas Health Mobility',
-        notes: `[VOICE MEMORANDUM TRANSCRIPT — 11:42 AM]:
-"Hey, recording this right after the call with Marcus at Atlas Health. They have an MVP built with Flutter and Supabase, but their clinical compliance and patient audit export is broken. They need a senior full-stack engineer to take ownership of the patient logging pipeline and prepare them for SOC2 audit. Target kick-off is the 1st of next month, budget looks like $14,000 for a 4-week sprint. Key requirement is 100% on-device data confidentiality because of patient records."`
+        name: 'Clear desk',
+        template: ''
       }
     ]
   },
@@ -51,27 +70,40 @@ Needs:
     docType: 'INVOICE MEMORANDUM',
     inputLabel: 'Technical Tasks, Commits & Hours',
     placeholder: 'List technical fixes, hours worked, features shipped, and milestones hit this cycle...',
-    defaultClient: 'HyperScale Tech',
-    samples: [
+    pretextHeading: 'Invoice ROI Justifier Guide',
+    pretextText: 'Enter the technical work you completed (commits, bug fixes, refactors, hours logged). The forge translates your engineering effort into clear business value for clients.',
+    guidePoints: [
+      { bold: 'Shipped Tasks:', text: 'List specific features built, bugs patched, or commits made.' },
+      { bold: 'Logged Time / Rate:', text: 'Total billable hours and agreed hourly or sprint rate.' },
+      { bold: 'Business ROI:', text: 'Speed improvements, uptime preserved, or checkout conversions.' },
+      { bold: 'Payment Terms:', text: 'e.g., Net 15, Net 30, or milestone handover terms.' }
+    ],
+    outlines: [
       {
-        name: 'Backend query refactor',
-        client: 'HyperScale Logistics',
-        notes: `Two-week development sprint completed:
-- Refactored PostgreSQL driver queries causing deadlock timeouts during peak driver shifts (saved ~3.2s per request)
-- Built live Webhook dispatcher for real-time delivery GPS tracking
-- Migrated legacy Docker container to production Kubernetes cluster with zero downtime
-- Debugged and patched memory leak in real-time notification microservice
-- Total tracked hours: 38 hours at $110/hr
-- Payment terms: Net 15`
+        name: '+ Sprint work log',
+        template: `Sprint Tasks Completed:
+- 
+- 
+
+Hours Logged & Rate:
+- Rate: $
+- Total Hours: 
+
+Payment Terms: Net 15`
       },
       {
-        name: 'Mobile bugfix sprint',
-        client: 'PayPulse Fintech',
-        notes: `Emergency maintenance and payment gateway hardening:
-- Resolved Stripe webhook race conditions failing 4% of checkout transactions
-- Fixed biometric login crash affecting iOS 17 users
-- Added automated unit test suite for card tokenization
-- Logged hours: 22 hours at $125/hr`
+        name: '+ Maintenance & fixes',
+        template: `Emergency Fixes & Security:
+- 
+
+Infrastructure Upgrades:
+- 
+
+Billable Hours: `
+      },
+      {
+        name: 'Clear desk',
+        template: ''
       }
     ]
   },
@@ -82,21 +114,33 @@ Needs:
     docType: 'STATEMENT OF WORK',
     inputLabel: 'Client Request or Scope Creep Discussion',
     placeholder: 'Paste the client request, Slack message, or email asking for extra unpaid work...',
-    defaultClient: 'OmniHealth Inc',
-    samples: [
+    pretextHeading: 'Scope Boundary Guide',
+    pretextText: 'Paste unexpected client requests, late-night Slack messages, or endless revision asks. The forge articulates what is covered by the current contract vs. billable add-ons.',
+    guidePoints: [
+      { bold: 'Original Scope:', text: 'What was agreed upon and covered in the base contract?' },
+      { bold: 'New Client Ask:', text: 'The specific extra feature, revision, or late addition.' },
+      { bold: 'Boundary Action:', text: 'Whether to politely decline, defer to Phase 2, or quote as an add-on.' }
+    ],
+    outlines: [
       {
-        name: 'Unpaid extra features',
-        client: 'OmniHealth SaaS',
-        notes: `Client sent late night Slack message:
-"Hey! While building the patient intake form, can you also quickly hook up two-way SMS messaging with Twilio, build an automated Spanish/English translation toggle, and create a custom analytics PDF export for clinic directors? We need this for the launch next Tuesday!"
-Current agreement only covers the English web intake form and basic CSV export.`
+        name: '+ Add-on request',
+        template: `Original Agreed Scope:
+- 
+
+New Client Request:
+- 
+
+Target Launch Date:`
       },
       {
-        name: 'Unlimited revisions request',
-        client: 'Apex Creative Co',
-        notes: `Client completed 4th round of feedback on landing page:
-"Can we try testing 3 completely different visual styles and typography combinations? Also change the mascot illustration. We'll decide which one we like best."
-Agreement specifies 2 revision cycles and explicitly states brand direction changes are separate work.`
+        name: '+ Revision pushback',
+        template: `Completed Revision Rounds:
+New Change Requests:
+Original Contract Policy:`
+      },
+      {
+        name: 'Clear desk',
+        template: ''
       }
     ]
   },
@@ -107,20 +151,30 @@ Agreement specifies 2 revision cycles and explicitly states brand direction chan
     docType: 'CORRESPONDENCE STRATEGY',
     inputLabel: 'Client Message & Sensitive Context',
     placeholder: 'Paste the difficult client email or describe the sensitive issue (late payment, budget haggle, pushy deadline)...',
-    defaultClient: 'Horizon Studio',
-    samples: [
+    pretextHeading: 'Client Correspondence Guide',
+    pretextText: 'Paste a tricky or sensitive client message (overdue payments, unrealistic rush deadlines, or budget disputes). The forge generates 3 diplomatic, boundary-protecting responses.',
+    guidePoints: [
+      { bold: 'Delicate Situation:', text: 'Overdue invoice, rush deadline pushback, or payment dispute.' },
+      { bold: 'Client Message:', text: 'Paste the actual client email, Slack snippet, or conversation.' },
+      { bold: 'Desired Outcome:', text: 'Get paid promptly, adjust timeline, or maintain a healthy relationship.' }
+    ],
+    outlines: [
       {
-        name: 'Late invoice follow-up',
-        client: 'Horizon Media Group',
-        notes: `Invoice #1042 for $3,400 is now 21 days overdue (Net 14 agreement).
-Client CFO hasn't responded to the automated billing reminders.
-Next scheduled feature release is ready on staging, but policy is to pause deployments when payments are delinquent. Need to enforce this professionally without ruining a potentially good relationship.`
+        name: '+ Overdue invoice',
+        template: `Invoice Number: #
+Days Overdue: 
+Amount: $
+Current Project Status: `
       },
       {
-        name: 'Pushy deadline pushback',
-        client: 'MetricFlow Systems',
-        notes: `Client delayed sending necessary API keys and design assets by 12 business days, but still expects the original hard launch date next Monday.
-Need to calmly clarify that the launch date shifts day-for-day based on when client prerequisites are received.`
+        name: '+ Unrealistic rush',
+        template: `Client Request: 
+Missing Client Prerequisites: 
+Proposed Adjusted Date: `
+      },
+      {
+        name: 'Clear desk',
+        template: ''
       }
     ]
   }
@@ -200,12 +254,23 @@ class WorkspaceController {
     this.btnExportMd = document.getElementById('btn-export-md');
     this.btnPrint = document.getElementById('btn-print');
 
+    // Pretext Guidance Card
+    this.pretextCard = document.getElementById('pretext-card');
+    this.pretextHeading = document.getElementById('pretext-heading');
+    this.pretextText = document.getElementById('pretext-text');
+
     // Output States
     this.sheetEmpty = document.getElementById('sheet-empty');
     this.sheetLoading = document.getElementById('sheet-loading');
     this.sheetError = document.getElementById('sheet-error');
     this.errorMessageText = document.getElementById('error-message-text');
     this.btnRetry = document.getElementById('btn-retry');
+
+    // Jargon / Gibberish Alert State
+    this.jargonAlertSheet = document.getElementById('jargon-alert-sheet');
+    this.jargonSampleText = document.getElementById('jargon-sample-text');
+    this.jargonGuideItems = document.getElementById('jargon-guide-items');
+    this.btnFixInput = document.getElementById('btn-fix-input');
 
     // Document Paper Sheet
     this.paperSheet = document.getElementById('paper-sheet');
@@ -228,6 +293,24 @@ class WorkspaceController {
   }
 
   bindEvents() {
+    // Return from jargon alert button
+    if (this.btnFixInput) {
+      this.btnFixInput.addEventListener('click', () => {
+        if (this.jargonAlertSheet) this.jargonAlertSheet.hidden = true;
+        if (this.sheetEmpty) this.sheetEmpty.hidden = false;
+        this.setInputMode('notes');
+        this.rawInput.focus();
+        if (this.pretextCard) {
+          this.pretextCard.style.transition = 'all 0.3s ease';
+          this.pretextCard.style.borderColor = 'var(--accent-ember)';
+          this.pretextCard.style.boxShadow = '0 0 0 3px var(--accent-ember-soft)';
+          setTimeout(() => {
+            this.pretextCard.style.borderColor = '';
+            this.pretextCard.style.boxShadow = '';
+          }, 1400);
+        }
+      });
+    }
     // Theme toggle
     this.themeToggleBtn.addEventListener('click', () => {
       this.toggleTheme();
@@ -364,25 +447,41 @@ class WorkspaceController {
     this.inputLabel.textContent = tool.inputLabel;
     this.rawInput.placeholder = tool.placeholder;
 
-    // Set default client if blank
-    if (!this.clientNameInput.value.trim()) {
-      this.clientNameInput.value = tool.defaultClient;
+    // Update pretext guidance
+    if (this.pretextHeading && tool.pretextHeading) {
+      this.pretextHeading.textContent = tool.pretextHeading;
+    }
+    if (this.pretextText && tool.pretextText) {
+      this.pretextText.textContent = tool.pretextText;
+    }
+
+    // Dismiss any previous jargon warning when switching tool
+    if (this.jargonAlertSheet && !this.jargonAlertSheet.hidden) {
+      this.jargonAlertSheet.hidden = true;
+      if (this.sheetEmpty) this.sheetEmpty.hidden = false;
     }
 
     // Toggle tone control (for scope and reply)
     this.toneGroup.hidden = !['scope', 'reply'].includes(toolKey);
 
-    // Populate scenario chips
+    // Populate clean starter outline chips (NO sample text or fake client names)
     this.scenarioChips.innerHTML = '';
-    tool.samples.forEach(sample => {
+    const outlines = tool.outlines || [];
+    outlines.forEach(outline => {
       const chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'chip-btn';
-      chip.textContent = sample.name;
+      chip.textContent = outline.name;
+      chip.title = outline.name.toLowerCase().includes('clear') ? 'Clear inputs completely' : 'Insert clean outline template';
       chip.addEventListener('click', () => {
-        this.clientNameInput.value = sample.client;
-        this.rawInput.value = sample.notes;
+        if (outline.name.toLowerCase().includes('clear')) {
+          this.rawInput.value = '';
+          this.clientNameInput.value = '';
+        } else {
+          this.rawInput.value = outline.template;
+        }
         this.analyzeInput();
+        this.rawInput.focus();
       });
       this.scenarioChips.appendChild(chip);
     });
@@ -674,13 +773,144 @@ class WorkspaceController {
     return null;
   }
 
+  isJargonOrGibberish(raw) {
+    const text = (raw || '').trim();
+    if (!text) return { isJargon: false };
+
+    // Rule 1: Check for excessive repeated characters (e.g. "DDDDD...", "aaaaaaa", "1111111")
+    if (/(.)\1{4,}/i.test(text)) {
+      return {
+        isJargon: true,
+        reason: 'Excessive repeated character sequences detected (e.g. repeated typing test keys).',
+        suggestion: 'Please enter authentic project notes, client requirements, or task hours.'
+      };
+    }
+
+    // Rule 2: Pattern repetition (e.g. "asdfasdfasdf", "testtesttest")
+    if (/([a-zA-Z0-9]{2,6})\1{3,}/i.test(text)) {
+      return {
+        isJargon: true,
+        reason: 'Repeated typing pattern detected.',
+        suggestion: 'Please provide genuine project requirements or client communication.'
+      };
+    }
+
+    const words = text.split(/\s+/).filter(Boolean);
+
+    // Rule 3: Very short input with no substance (< 12 chars and <= 2 words)
+    if (text.length < 12 && words.length <= 2) {
+      return {
+        isJargon: true,
+        reason: 'Input is too brief to construct a valid freelance deliverable.',
+        suggestion: 'Enter at least a few bullet points describing the work, hours, or deliverables.'
+      };
+    }
+
+    // Rule 4: Token-level analysis for keyboard mash / unpronounceable jargon
+    // e.g. "19023U10IHJIBDJIWBDUI2GHRE0", "U38309", "4714089237094710949041"
+    let mashCount = 0;
+    let pureNumberCount = 0;
+    let normalWordCount = 0;
+
+    for (const w of words) {
+      const clean = w.replace(/[^a-zA-Z0-9]/g, '');
+      if (!clean) continue;
+
+      if (/^\d+$/.test(clean)) {
+        pureNumberCount++;
+        continue;
+      }
+
+      // Mixed alphanumeric noise in a single token (e.g. 19023U10IHJIBDJIWBDUI2GHRE0 or U38309)
+      const hasLetters = /[a-zA-Z]/.test(clean);
+      const hasDigits = /[0-9]/.test(clean);
+      if (hasLetters && hasDigits && clean.length >= 6) {
+        mashCount++;
+        continue;
+      }
+
+      // Check for lack of vowels or 5+ consecutive consonants (unpronounceable)
+      const vowels = (clean.match(/[aeiouyAEIOUY]/g) || []).length;
+      const consonantCluster = /[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]{5,}/.test(clean);
+
+      if (clean.length >= 6 && (vowels === 0 || consonantCluster)) {
+        mashCount++;
+        continue;
+      }
+
+      normalWordCount++;
+    }
+
+    // If input consists primarily of mash tokens or number sequences
+    if (mashCount > 0 && (mashCount >= normalWordCount || mashCount / words.length >= 0.25)) {
+      return {
+        isJargon: true,
+        reason: 'Unrecognized alphanumeric keyboard mashing or random test input detected.',
+        suggestion: 'Please provide real project deliverables, timeline, or client instructions.'
+      };
+    }
+
+    if (words.length >= 2 && normalWordCount === 0 && pureNumberCount > 0) {
+      return {
+        isJargon: true,
+        reason: 'Input contains only random numbers with no descriptive context.',
+        suggestion: 'Add descriptions for the deliverables, tasks, or rates alongside numbers.'
+      };
+    }
+
+    // Rule 5: Overall letter-to-vowel distribution check for long inputs
+    const allLetters = (text.match(/[a-zA-Z]/g) || []).length;
+    const allVowels = (text.match(/[aeiouAEIOU]/g) || []).length;
+    if (allLetters >= 16 && (allVowels / allLetters < 0.16 || allVowels / allLetters > 0.85)) {
+      return {
+        isJargon: true,
+        reason: 'Unnatural character distribution detected.',
+        suggestion: 'Please write in standard project terminology so the engine can format your document.'
+      };
+    }
+
+    return { isJargon: false };
+  }
+
+  showJargonState(input, check) {
+    if (this.sheetEmpty) this.sheetEmpty.hidden = true;
+    if (this.sheetLoading) this.sheetLoading.hidden = true;
+    if (this.sheetError) this.sheetError.hidden = true;
+    if (this.paperSheet) this.paperSheet.hidden = true;
+    if (this.rawMarkdownEditor) this.rawMarkdownEditor.hidden = true;
+
+    if (this.jargonAlertSheet) {
+      this.jargonAlertSheet.hidden = false;
+      if (this.jargonSampleText) {
+        const preview = input.length > 70 ? input.slice(0, 70) + '...' : input;
+        this.jargonSampleText.textContent = `"${preview}"`;
+      }
+      if (this.jargonGuideItems) {
+        const tool = TOOLS[this.currentTool];
+        const points = (tool && tool.guidePoints) || [
+          { bold: 'Deliverables:', text: 'Features, pages, fixes, or services to build.' },
+          { bold: 'Timeline / Scope:', text: 'Target delivery date, sprints, or hours required.' },
+          { bold: 'Pricing / Terms:', text: 'Budget, hourly rates, or deposit structure.' }
+        ];
+        this.jargonGuideItems.innerHTML = points.map(pt => `<li><strong>${pt.bold}</strong> ${pt.text}</li>`).join('');
+      }
+    }
+  }
+
   async handleForge() {
     const input = this.rawInput.value.trim();
     const clientName = this.clientNameInput.value.trim() || 'Client';
 
     if (!input) {
-      alert('Please enter or select some project notes first.');
+      alert('Please enter your project notes or click a starter outline first.');
       this.rawInput.focus();
+      return;
+    }
+
+    // Heuristic Validation Rule: Check for jargon, keyboard mashing, or unpronounceable input
+    const jargonCheck = this.isJargonOrGibberish(input);
+    if (jargonCheck.isJargon) {
+      this.showJargonState(input, jargonCheck);
       return;
     }
 
@@ -722,11 +952,12 @@ class WorkspaceController {
     this.btnForge.disabled = isLoading;
     if (isLoading) {
       this.btnForgeLabel.textContent = 'Forging...';
-      this.sheetEmpty.hidden = true;
-      this.sheetError.hidden = true;
-      this.paperSheet.hidden = true;
-      this.rawMarkdownEditor.hidden = true;
-      this.sheetLoading.hidden = false;
+      if (this.sheetEmpty) this.sheetEmpty.hidden = true;
+      if (this.sheetError) this.sheetError.hidden = true;
+      if (this.paperSheet) this.paperSheet.hidden = true;
+      if (this.rawMarkdownEditor) this.rawMarkdownEditor.hidden = true;
+      if (this.jargonAlertSheet) this.jargonAlertSheet.hidden = true;
+      if (this.sheetLoading) this.sheetLoading.hidden = false;
 
       // Reset loading terminal steps
       const s1 = document.getElementById('load-step-1');
@@ -740,17 +971,18 @@ class WorkspaceController {
       setTimeout(() => s3.classList.remove('pending'), 800);
     } else {
       this.btnForgeLabel.textContent = 'Forge Deliverable';
-      this.sheetLoading.hidden = true;
+      if (this.sheetLoading) this.sheetLoading.hidden = true;
     }
   }
 
   showErrorState(msg) {
-    this.sheetLoading.hidden = true;
-    this.paperSheet.hidden = true;
-    this.rawMarkdownEditor.hidden = true;
-    this.sheetEmpty.hidden = true;
-    this.sheetError.hidden = false;
-    this.errorMessageText.textContent = msg;
+    if (this.sheetLoading) this.sheetLoading.hidden = true;
+    if (this.paperSheet) this.paperSheet.hidden = true;
+    if (this.rawMarkdownEditor) this.rawMarkdownEditor.hidden = true;
+    if (this.sheetEmpty) this.sheetEmpty.hidden = true;
+    if (this.jargonAlertSheet) this.jargonAlertSheet.hidden = true;
+    if (this.sheetError) this.sheetError.hidden = false;
+    if (this.errorMessageText) this.errorMessageText.textContent = msg;
   }
 
   async streamToPaper(data, elapsedMs, clientName) {
@@ -773,11 +1005,12 @@ class WorkspaceController {
     this.statusLatency.textContent = `${data.durationMs || elapsedMs} ms`;
     this.statusMemory.textContent = data.backboardActive ? 'backboard cloud' : 'local memory';
 
-    // Show paper sheet
-    this.sheetEmpty.hidden = true;
-    this.sheetLoading.hidden = true;
-    this.sheetError.hidden = true;
-    this.paperSheet.hidden = false;
+    // Show paper sheet and hide other states
+    if (this.sheetEmpty) this.sheetEmpty.hidden = true;
+    if (this.sheetLoading) this.sheetLoading.hidden = true;
+    if (this.sheetError) this.sheetError.hidden = true;
+    if (this.jargonAlertSheet) this.jargonAlertSheet.hidden = true;
+    if (this.paperSheet) this.paperSheet.hidden = false;
     this.rawMarkdownEditor.value = this.currentOutputMarkdown;
 
     // Progressive rendering

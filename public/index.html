@@ -94,18 +94,33 @@
           </div>
         </div>
 
-        <!-- Sample Scenario Chips -->
+        <!-- Pretext Guidance Box: Explains clearly what to enter for the active tool -->
+        <div class="pretext-card" id="pretext-card">
+          <div class="pretext-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+          </div>
+          <div class="pretext-content">
+            <span class="pretext-heading" id="pretext-heading">What to enter for this tool:</span>
+            <p class="pretext-text" id="pretext-text">Paste client requirements, milestones, deadlines, and pricing notes. Columns start completely clean.</p>
+          </div>
+        </div>
+
+        <!-- Quick Structure Outlines (Clean template starters) -->
         <div class="scenarios-strip">
-          <span class="scenarios-label">Load sample:</span>
+          <span class="scenarios-label">Starter outline:</span>
           <div class="scenario-chips" id="scenario-chips">
-            <!-- Dynamically populated per tool -->
+            <!-- Dynamically populated with clean blank structure outlines -->
           </div>
         </div>
 
         <!-- Inputs Form -->
         <div class="form-group">
           <label for="client-name" class="field-label">Client or Project Name</label>
-          <input type="text" id="client-name" class="field-input text-field" placeholder="e.g. Apex HealthTech" value="Nexus Interactive">
+          <input type="text" id="client-name" class="field-input text-field" placeholder="e.g. Acme HealthTech, Sarah from Studio" value="" autocomplete="off">
         </div>
 
         <!-- Tone / Stance selector (active for reply & scope) -->
@@ -264,19 +279,42 @@
             <div class="loading-preview" id="loading-preview-text"></div>
           </div>
 
-          <!-- Error State -->
-          <div class="sheet-error" id="sheet-error" hidden>
-            <div class="error-badge">Generation Halted</div>
-            <p class="error-message" id="error-message-text">Unable to complete request.</p>
-            <button type="button" class="btn-ghost" id="btn-retry">Retry generation</button>
+          <!-- Jargon / Gibberish State (Triggered when user enters random characters or test mashing) -->
+          <div class="jargon-alert-sheet" id="jargon-alert-sheet" hidden>
+            <div class="jargon-icon-box">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <h2 class="jargon-title">Actionable Brief Needed</h2>
+            <div class="jargon-tag">Unrecognized / Jargon Input</div>
+            <p class="jargon-desc">
+              The workbench detected random characters or keyboard test mashing. Llama 3.1 needs real project details to deliver an accurate deliverable.
+            </p>
+            <div class="jargon-sample-box">
+              <span class="jargon-sample-label">Your input:</span>
+              <code class="jargon-sample-code" id="jargon-sample-text">"..."</code>
+            </div>
+            <div class="jargon-guide-card">
+              <span class="guide-title">What to provide instead:</span>
+              <ul class="guide-list" id="jargon-guide-items">
+                <li><strong>Deliverables:</strong> Features, fixes, designs, or pages to build.</li>
+                <li><strong>Timeline / Scope:</strong> Target launch date, milestones, or sprint hours.</li>
+                <li><strong>Budget / Rates:</strong> Hourly rate, project quote, or deposit percentage.</li>
+              </ul>
+            </div>
+            <button type="button" class="btn-primary" id="btn-fix-input">Return to Editor &amp; Enter Details</button>
           </div>
 
           <!-- Document Paper Sheet -->
           <article class="paper-sheet" id="paper-sheet" hidden>
+            <div class="paper-stamp" id="paper-stamp">DRAFT SPEC</div>
             <header class="paper-header">
               <div class="paper-header-left">
                 <span class="doc-type-label" id="doc-type-label">STATEMENT OF WORK</span>
-                <span class="doc-client" id="doc-client-label">Client: Nexus Interactive</span>
+                <span class="doc-client" id="doc-client-label">Client: Client</span>
               </div>
               <div class="paper-header-right">
                 <span class="doc-date" id="doc-date-label">October 14, 2026</span>
