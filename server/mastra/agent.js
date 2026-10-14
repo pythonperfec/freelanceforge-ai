@@ -140,7 +140,7 @@ export class FreelanceForgeAgent {
       result = generateIntelligentSynthesis(tool, input, clientName, customSystemPrompt);
       engine = 'synthesizer';
       model = 'Template Synthesizer (Offline Fallback)';
-      isLocal = true;
+      isLocal = false;
     }
 
     const durationMs = Date.now() - startTime;

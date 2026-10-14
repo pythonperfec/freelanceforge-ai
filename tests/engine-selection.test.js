@@ -121,7 +121,7 @@ describe('FreelanceForge Engine Selection Priority Logic', () => {
     });
 
     assert.equal(result.engine, 'synthesizer');
-    assert.equal(result.isLocal, true);
+    assert.equal(result.isLocal, false);
     assert.ok(result.model.includes('Template Synthesizer'));
     assert.ok(result.content.length > 50);
   });
