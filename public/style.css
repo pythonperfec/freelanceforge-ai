@@ -201,51 +201,6 @@ body {
   background-color: var(--status-green);
 }
 
-/* Hosted Cloud Demo Warning Banner */
-.demo-banner {
-  background-color: var(--accent-ember-soft);
-  border-bottom: 1.5px solid var(--accent-ember);
-  padding: 8px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  color: var(--color-ink);
-  z-index: 9;
-}
-
-.demo-banner-content {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.demo-banner-tag {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  background-color: var(--accent-ember);
-  color: #FFFFFF;
-  padding: 2px 6px;
-  border-radius: var(--radius-xs);
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
-}
-
-.demo-banner-text strong {
-  color: var(--accent-ember);
-}
-
-.btn-close-banner {
-  font-size: 16px;
-  padding: 2px 8px;
-  border-color: transparent;
-  cursor: pointer;
-}
-
 .btn-ghost {
   background: transparent;
   border: 1px solid var(--border-color);

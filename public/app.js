@@ -204,8 +204,6 @@ class WorkspaceController {
     this.engineIndicator = document.getElementById('engine-indicator');
     this.engineDot = document.getElementById('engine-dot');
     this.engineLabel = document.getElementById('engine-label');
-    this.demoBanner = document.getElementById('demo-banner');
-    this.btnCloseBanner = document.getElementById('btn-close-banner');
 
     // Rail
     this.railButtons = document.querySelectorAll('.rail-item');
@@ -381,13 +379,6 @@ class WorkspaceController {
     window.addEventListener('focus', () => {
       this.pollSystemStatus();
     });
-
-    // Dismiss hosted demo warning banner
-    if (this.btnCloseBanner) {
-      this.btnCloseBanner.addEventListener('click', () => {
-        if (this.demoBanner) this.demoBanner.hidden = true;
-      });
-    }
 
     // Tone selector
     this.toneButtons.forEach(btn => {
@@ -755,11 +746,6 @@ class WorkspaceController {
 
     if (latencyMs !== null && latencyMs !== undefined) {
       this.statusLatency.textContent = `${latencyMs} ms`;
-    }
-
-    if (this.demoBanner) {
-      const isCloudHosted = engine === 'groq' || window.location.hostname.includes('onrender.com');
-      this.demoBanner.hidden = !isCloudHosted;
     }
   }
 
