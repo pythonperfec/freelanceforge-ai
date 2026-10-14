@@ -197,7 +197,6 @@ class WorkspaceController {
   }
 
   cacheDom() {
-    // Header
     this.themeToggleBtn = document.getElementById('theme-toggle');
     this.themeText = document.getElementById('theme-text');
     this.btnShortcuts = document.getElementById('btn-shortcuts');
@@ -205,12 +204,9 @@ class WorkspaceController {
     this.engineDot = document.getElementById('engine-dot');
     this.engineLabel = document.getElementById('engine-label');
 
-    // Rail
     this.railButtons = document.querySelectorAll('.rail-item');
 
-    // Input Pane
     this.notesInputGroup = document.getElementById('notes-input-group');
-
     this.toolTitle = document.getElementById('tool-title');
     this.toolSubtitle = document.getElementById('tool-subtitle');
     this.scenarioChips = document.getElementById('scenario-chips');
@@ -227,7 +223,6 @@ class WorkspaceController {
     this.currentAbortController = null;
     this.privacyStatusText = document.getElementById('privacy-status-text');
 
-    // Voice Note controls
     this.btnVoiceToggle = document.getElementById('btn-voice-toggle');
     this.voiceBtnText = document.getElementById('voice-btn-text');
     this.voiceNotePanel = document.getElementById('voice-note-panel');
@@ -242,32 +237,27 @@ class WorkspaceController {
     this.voiceSeconds = 0;
     this.recordedVoiceText = '';
 
-    // Output Pane
     this.tabPreview = document.getElementById('tab-preview');
     this.tabMarkdown = document.getElementById('tab-markdown');
     this.btnCopy = document.getElementById('btn-copy');
     this.btnExportMd = document.getElementById('btn-export-md');
     this.btnPrint = document.getElementById('btn-print');
 
-    // Pretext Guidance Card
     this.pretextCard = document.getElementById('pretext-card');
     this.pretextHeading = document.getElementById('pretext-heading');
     this.pretextText = document.getElementById('pretext-text');
 
-    // Output States
     this.sheetEmpty = document.getElementById('sheet-empty');
     this.sheetLoading = document.getElementById('sheet-loading');
     this.sheetError = document.getElementById('sheet-error');
     this.errorMessageText = document.getElementById('error-message-text');
     this.btnRetry = document.getElementById('btn-retry');
 
-    // Jargon / Gibberish Alert State
     this.jargonAlertSheet = document.getElementById('jargon-alert-sheet');
     this.jargonSampleText = document.getElementById('jargon-sample-text');
     this.jargonGuideItems = document.getElementById('jargon-guide-items');
     this.btnFixInput = document.getElementById('btn-fix-input');
 
-    // Document Paper Sheet
     this.paperSheet = document.getElementById('paper-sheet');
     this.docTypeLabel = document.getElementById('doc-type-label');
     this.docClientLabel = document.getElementById('doc-client-label');
@@ -275,18 +265,15 @@ class WorkspaceController {
     this.paperBody = document.getElementById('paper-body');
     this.rawMarkdownEditor = document.getElementById('raw-markdown-editor');
 
-    // Bottom Status Strip
     this.statusModel = document.getElementById('status-model');
     this.statusSource = document.getElementById('status-source');
     this.statusLatency = document.getElementById('status-latency');
     this.statusMemory = document.getElementById('status-memory');
     this.statusNote = document.getElementById('status-note');
 
-    // Modal
     this.shortcutsModal = document.getElementById('shortcuts-modal');
     this.btnCloseModal = document.getElementById('btn-close-modal');
 
-    // Backboard Memory Elements
     this.clientMemoryStrip = document.getElementById('client-memory-strip');
     this.memoryChipText = document.getElementById('memory-chip-text');
     this.btnViewMemory = document.getElementById('btn-view-memory');
@@ -755,7 +742,6 @@ class WorkspaceController {
     const text = (raw || '').trim();
     if (!text) return { isJargon: false };
 
-    // Rule 1: Check for excessive repeated characters (e.g. "DDDDD...", "aaaaaaa", "1111111")
     if (/(.)\1{4,}/i.test(text)) {
       return {
         isJargon: true,
@@ -764,7 +750,6 @@ class WorkspaceController {
       };
     }
 
-    // Rule 2: Pattern repetition (e.g. "asdfasdfasdf", "testtesttest")
     if (/([a-zA-Z0-9]{2,6})\1{3,}/i.test(text)) {
       return {
         isJargon: true,
@@ -775,7 +760,6 @@ class WorkspaceController {
 
     const words = text.split(/\s+/).filter(Boolean);
 
-    // Rule 3: Very short input with no substance (< 12 chars and <= 2 words)
     if (text.length < 12 && words.length <= 2) {
       return {
         isJargon: true,
@@ -784,8 +768,6 @@ class WorkspaceController {
       };
     }
 
-    // Rule 4: Token-level analysis for keyboard mash / unpronounceable jargon
-    // e.g. "19023U10IHJIBDJIWBDUI2GHRE0", "U38309", "4714089237094710949041"
     let mashCount = 0;
     let pureNumberCount = 0;
     let normalWordCount = 0;
@@ -799,7 +781,6 @@ class WorkspaceController {
         continue;
       }
 
-      // Mixed alphanumeric noise in a single token (e.g. 19023U10IHJIBDJIWBDUI2GHRE0 or U38309)
       const hasLetters = /[a-zA-Z]/.test(clean);
       const hasDigits = /[0-9]/.test(clean);
       if (hasLetters && hasDigits && clean.length >= 6) {
@@ -807,7 +788,6 @@ class WorkspaceController {
         continue;
       }
 
-      // Check for lack of vowels or 5+ consecutive consonants (unpronounceable)
       const vowels = (clean.match(/[aeiouyAEIOUY]/g) || []).length;
       const consonantCluster = /[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]{5,}/.test(clean);
 
@@ -819,7 +799,6 @@ class WorkspaceController {
       normalWordCount++;
     }
 
-    // If input consists primarily of mash tokens or number sequences
     if (mashCount > 0 && (mashCount >= normalWordCount || mashCount / words.length >= 0.25)) {
       return {
         isJargon: true,
@@ -836,7 +815,6 @@ class WorkspaceController {
       };
     }
 
-    // Rule 5: Overall letter-to-vowel distribution check for long inputs
     const allLetters = (text.match(/[a-zA-Z]/g) || []).length;
     const allVowels = (text.match(/[aeiouAEIOU]/g) || []).length;
     if (allLetters >= 16 && (allVowels / allLetters < 0.16 || allVowels / allLetters > 0.85)) {

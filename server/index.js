@@ -20,12 +20,10 @@ app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Prompt Transparency Endpoint (Allows users to inspect and customize agent system prompts)
 app.get('/api/prompts', (req, res) => {
   res.json({ prompts: SYSTEM_PROMPTS });
 });
 
-// Health Check Endpoint (Required by Render, client status strip & tests)
 app.get('/api/health', async (req, res) => {
   await backboardService.initPromise;
   const engineData = await agent.getAvailableEngines();
@@ -55,7 +53,6 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
-// Backboard Memory Management Endpoints
 app.get('/api/memory/status', async (req, res) => {
   await backboardService.initPromise;
   res.json({
@@ -89,7 +86,6 @@ app.delete('/api/memory/client/:name', async (req, res) => {
   res.json({ clientName, success: removed });
 });
 
-// Non-Streaming Generation Endpoint
 app.post('/api/generate', async (req, res) => {
   try {
     const { tool, input, clientName, customSystemPrompt } = req.body;
@@ -118,7 +114,6 @@ app.post('/api/generate', async (req, res) => {
   }
 });
 
-// Server-Sent Events (SSE) Streaming Generation Endpoint with Client Abort
 app.post('/api/generate-stream', async (req, res) => {
   try {
     const { tool, input, clientName, customSystemPrompt } = req.body;
@@ -130,7 +125,6 @@ app.post('/api/generate-stream', async (req, res) => {
     const validTools = ['proposal', 'invoice', 'scope', 'reply'];
     const selectedTool = validTools.includes(tool) ? tool : 'proposal';
 
-    // Set SSE headers
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -139,7 +133,6 @@ app.post('/api/generate-stream', async (req, res) => {
     const abortController = new AbortController();
     res.on('close', () => {
       if (!res.writableEnded) {
-        console.log('[SSE] Client disconnected before stream completion. Aborting inference.');
         abortController.abort();
       }
     });
@@ -179,7 +172,6 @@ app.post('/api/generate-stream', async (req, res) => {
   }
 });
 
-// Remembered Clients List (via Backboard)
 app.get('/api/clients', (req, res) => {
   try {
     const clients = backboardService.getRememberedClients();
@@ -189,21 +181,10 @@ app.get('/api/clients', (req, res) => {
   }
 });
 
-// Catch-all route to serve the SPA
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Start Server
 app.listen(PORT, () => {
-  console.log(`
-=============================================================
-🚀 FreelanceForge AI Server Running!
-📍 URL: http://localhost:${PORT}
-🔒 Local-First Privacy: Active
-📦 Open-Weight Model: Llama 3.1 8B
-🌐 Render Deploy Ready: Port ${PORT}
-🧠 Backboard Memory: ${backboardService.isCloudActive() ? 'Cloud Active' : 'Local Emulation'}
-=============================================================
-  `);
+  console.log(`FreelanceForge AI listening on http://localhost:${PORT}`);
 });

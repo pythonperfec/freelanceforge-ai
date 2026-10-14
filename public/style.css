@@ -1,12 +1,4 @@
-/* ==========================================================================
-   FreelanceForge — Workshop Desk Design System
-   Themes: Paper (Light default) & Forge (Dark toggle)
-   Fonts: Fraunces (Headings/Document), IBM Plex Sans (UI), IBM Plex Mono (Data)
-   ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   Design Tokens & Themes
-   -------------------------------------------------------------------------- */
 :root,
 [data-theme="paper"] {
   --bg-app: #F4EFE6;
@@ -62,9 +54,6 @@
   --status-green-soft: rgba(76, 175, 80, 0.15);
 }
 
-/* --------------------------------------------------------------------------
-   Reset & Base Styles
-   -------------------------------------------------------------------------- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -87,9 +76,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* --------------------------------------------------------------------------
-   Header Bar
-   -------------------------------------------------------------------------- */
 .app-header {
   position: relative;
   height: 48px;
@@ -229,9 +215,6 @@ body {
   font-weight: 600;
 }
 
-/* --------------------------------------------------------------------------
-   Workspace Layout
-   -------------------------------------------------------------------------- */
 .workspace-layout {
   flex: 1;
   display: flex;
@@ -239,9 +222,6 @@ body {
   height: calc(100vh - 48px - 32px);
 }
 
-/* --------------------------------------------------------------------------
-   Left Rail (Tool Navigation)
-   -------------------------------------------------------------------------- */
 .tool-rail {
   width: 170px;
   min-width: 170px;
@@ -322,9 +302,6 @@ body {
   background-color: var(--bg-surface-alt);
 }
 
-/* --------------------------------------------------------------------------
-   Main Desk Grid (Input Desk + Output Paper Desk)
-   -------------------------------------------------------------------------- */
 .desk-grid {
   flex: 1;
   display: grid;
@@ -802,9 +779,6 @@ textarea.textarea-field {
   color: #FFFFFF;
 }
 
-/* --------------------------------------------------------------------------
-   Output Desk & Paper Sheet
-   -------------------------------------------------------------------------- */
 .output-header {
   height: 48px;
   min-height: 48px;
@@ -1108,9 +1082,6 @@ textarea.textarea-field {
   margin-bottom: 16px;
 }
 
-/* --------------------------------------------------------------------------
-   The Paper Document Sheet (Fully wraps all generated content)
-   -------------------------------------------------------------------------- */
 .paper-sheet {
   position: relative;
   width: 100%;
@@ -1283,9 +1254,6 @@ textarea.raw-markdown-editor {
   resize: none;
 }
 
-/* --------------------------------------------------------------------------
-   Bottom Status Strip
-   -------------------------------------------------------------------------- */
 .status-strip {
   height: 34px;
   min-height: 34px;
@@ -1355,9 +1323,6 @@ textarea.raw-markdown-editor {
   font-weight: 600;
 }
 
-/* --------------------------------------------------------------------------
-   Shortcuts Modal Dialog
-   -------------------------------------------------------------------------- */
 .modal-dialog {
   margin: auto;
   border: 1px solid var(--border-color);
@@ -1490,9 +1455,6 @@ textarea.raw-markdown-editor {
   color: var(--color-ink-faint);
 }
 
-/* --------------------------------------------------------------------------
-   Backboard Client Memory & Vault
-   -------------------------------------------------------------------------- */
 .client-memory-strip {
   margin-top: 6px;
 }
@@ -1704,9 +1666,6 @@ textarea.raw-markdown-editor {
   color: var(--color-ink-faint);
 }
 
-/* --------------------------------------------------------------------------
-   Print Stylesheet
-   -------------------------------------------------------------------------- */
 @media print {
   body {
     background: #FFFFFF !important;
@@ -1739,9 +1698,6 @@ textarea.raw-markdown-editor {
   }
 }
 
-/* --------------------------------------------------------------------------
-   Responsive Design down to 380px
-   -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
   .workspace-layout {
     flex-direction: column;

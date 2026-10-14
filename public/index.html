@@ -7,22 +7,17 @@
   <title>FreelanceForge — Local-first workspace for proposals, invoices, and scope</title>
   <meta name="description"
     content="Local-first freelancer workspace. Draft proposals, justify invoice line-items, define scope boundaries, and write client correspondence using open-weight models.">
-
-  <!-- Typography: Fraunces, IBM Plex Sans, IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
     rel="stylesheet">
-
-  <!-- Markdown parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <!-- Top Application Bar -->
   <header class="app-header">
     <div class="header-left">
       <span class="workspace-badge">workspace</span>
@@ -30,7 +25,6 @@
 
     <div class="header-center">
       <div class="brand-mark" aria-hidden="true">
-        <!-- Minimal SVG anvil / forge line icon -->
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 8h16l-3 4H7L4 8z" />
@@ -74,10 +68,7 @@
         <span class="theme-text" id="theme-text">Forge theme</span>
       </button>
   </header>
-
-  <!-- Workspace Container: Left Navigation Rail + Dual-Pane Desk -->
   <div class="workspace-layout">
-    <!-- Left Narrow Navigation Rail -->
     <nav class="tool-rail" aria-label="Tool selection">
       <div class="rail-header">Tools</div>
       <button type="button" class="rail-item active" data-tool="proposal" id="rail-proposal">
@@ -107,10 +98,7 @@
         </div>
       </div>
     </nav>
-
-    <!-- Main Desk (Two Panes: Raw Input on Left, Paper Output on Right) -->
     <main class="desk-grid">
-      <!-- Left Pane: Raw Input Desk -->
       <section class="desk-pane input-pane" aria-label="Input desk">
         <div class="pane-header">
           <div class="pane-title-group">
@@ -119,8 +107,6 @@
               client-ready proposal.</p>
           </div>
         </div>
-
-        <!-- Pretext Guidance Box: Explains clearly what to enter for the active tool -->
         <div class="pretext-card" id="pretext-card">
           <div class="pretext-icon">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
@@ -136,16 +122,11 @@
               notes. Columns start completely clean.</p>
           </div>
         </div>
-
-        <!-- Quick Structure Outlines (Clean template starters) -->
         <div class="scenarios-strip">
           <span class="scenarios-label">Starter outline:</span>
           <div class="scenario-chips" id="scenario-chips">
-            <!-- Dynamically populated with clean blank structure outlines -->
           </div>
         </div>
-
-        <!-- Inputs Form -->
         <div class="form-group">
           <label for="client-name" class="field-label">Client or Project Name</label>
           <input type="text" id="client-name" class="field-input text-field"
@@ -158,8 +139,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Tone / Stance selector (active for reply & scope) -->
         <div class="form-group" id="tone-group" hidden>
           <label class="field-label">Approach</label>
           <div class="segmented-control" role="radiogroup">
@@ -168,8 +147,6 @@
             <button type="button" class="seg-btn" data-tone="direct">Firm boundary</button>
           </div>
         </div>
-
-        <!-- Notes Input Group -->
         <div class="form-group flex-fill" id="notes-input-group">
           <div class="label-with-meta">
             <label for="raw-input" class="field-label" id="input-label">Raw Notes or Client Message</label>
@@ -189,8 +166,6 @@
               <span class="word-counter" id="word-counter">0 words</span>
             </div>
           </div>
-
-          <!-- Voice Note Active Panel -->
           <div class="voice-note-panel" id="voice-note-panel" hidden>
             <div class="voice-panel-left">
               <span class="voice-pulse-dot" id="voice-pulse-dot"></span>
@@ -206,8 +181,6 @@
           <textarea id="raw-input" class="field-input textarea-field"
             placeholder="Paste your rough notes, audio transcript, or client email here..."></textarea>
         </div>
-
-        <!-- Action bar -->
         <div class="pane-action-bar">
           <div class="privacy-note">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -230,8 +203,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Right Pane: The Paper Sheet Output -->
       <section class="desk-pane output-pane" aria-label="Forged deliverable">
         <div class="pane-header output-header">
           <div class="output-tabs">
@@ -268,10 +239,7 @@
             </button>
           </div>
         </div>
-
-        <!-- The Paper Document Area -->
         <div class="sheet-viewport" id="sheet-viewport">
-          <!-- Empty State -->
           <div class="sheet-empty" id="sheet-empty">
             <div class="empty-mark">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -287,8 +255,6 @@
                 Deliverable</strong>.</p>
             <p class="empty-footnote">Generated documents format directly onto a print-ready paper sheet.</p>
           </div>
-
-          <!-- Loading State (Progressive Text Streaming, NOT a spinner) -->
           <div class="sheet-loading" id="sheet-loading" hidden>
             <div class="loading-terminal">
               <div class="terminal-line" id="load-step-1">
@@ -303,8 +269,6 @@
             </div>
             <div class="loading-preview" id="loading-preview-text"></div>
           </div>
-
-          <!-- Jargon / Gibberish State (Triggered when user enters random characters or test mashing) -->
           <div class="jargon-alert-sheet" id="jargon-alert-sheet" hidden>
             <div class="jargon-icon-box">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -334,8 +298,6 @@
             </div>
             <button type="button" class="btn-primary" id="btn-fix-input">Return to Editor &amp; Enter Details</button>
           </div>
-
-          <!-- Document Paper Sheet -->
           <article class="paper-sheet" id="paper-sheet" hidden>
             <div class="paper-stamp" id="paper-stamp">DRAFT SPEC</div>
             <header class="paper-header">
@@ -350,18 +312,13 @@
             </header>
 
             <div class="paper-body markdown-body" id="paper-body">
-              <!-- Rendered document content -->
             </div>
           </article>
-
-          <!-- Raw Markdown View -->
           <textarea class="raw-markdown-editor" id="raw-markdown-editor" spellcheck="false" hidden></textarea>
         </div>
       </section>
     </main>
   </div>
-
-  <!-- Bottom Telemetry Status Strip -->
   <footer class="status-strip">
     <div class="status-left">
       <span class="status-item">
@@ -391,8 +348,6 @@
       <span class="footer-project">Under <strong class="challenge-name">Hacktoberfest Open-Source AI Challenge</strong> project</span>
     </div>
   </footer>
-
-  <!-- Keyboard Shortcuts & Project Credits Dialog -->
   <dialog class="modal-dialog" id="shortcuts-modal">
     <div class="modal-card">
       <div class="modal-header">
@@ -404,8 +359,6 @@
           &times;
         </button>
       </div>
-
-      <!-- Creator & Challenge Attribution Card -->
       <div class="creator-challenge-card">
         <div class="creator-badge-row">
           <span class="creator-badge-tag">Creator</span>
@@ -446,8 +399,6 @@
       </div>
     </div>
   </dialog>
-
-  <!-- Backboard Client Memory Vault Dialog -->
   <dialog class="modal-dialog" id="memory-modal">
     <div class="modal-card memory-modal-card">
       <div class="modal-header">
@@ -470,7 +421,6 @@
         </div>
 
         <div class="memory-clients-list" id="memory-clients-list">
-          <!-- Dynamically populated client memory cards -->
           <div class="memory-empty-state" id="memory-empty-state">
             <p>No client memories stored yet. As you generate proposals and invoices with client names, Backboard automatically tracks agreed rates, payment terms, and deliverable histories.</p>
           </div>

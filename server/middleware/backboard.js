@@ -3,9 +3,7 @@ dotenv.config();
 import { BackboardClient } from 'backboard-sdk';
 
 /**
- * Backboard Memory & Client Persistence Service
- * Enables persistent client memory across freelance proposals, invoices, and scope documents.
- * Qualifies for Hacktoberfest "Best Use of Backboard" category.
+ * Client persistence and memory service using Backboard.io.
  */
 class BackboardService {
   constructor() {

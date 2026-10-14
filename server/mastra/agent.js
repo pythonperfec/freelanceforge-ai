@@ -66,30 +66,26 @@ export class FreelanceForgeAgent {
   async executePipeline({ tool, input, clientName, customSystemPrompt, signal }) {
     const startTime = Date.now();
 
-    // Step 1: Memory & Context Retrieval via Backboard
     let clientContext = null;
     if (clientName) {
       try {
         clientContext = await backboardService.getClientContext(clientName);
       } catch (err) {
-        console.warn(`[Pipeline Step 1] Backboard lookup warning: ${err.message}`);
+        console.warn(`[Pipeline] Context lookup warning: ${err.message}`);
       }
     }
 
-    // Step 2: Prompt Formatting (supports user-edited system prompt)
     const { system, user } = formatPrompt(tool, input, clientContext, customSystemPrompt);
 
-    // Step 3: Engine Selection
     let result = null;
     let engine = 'synthesizer';
     let model = 'Template Synthesizer (Offline Fallback)';
     let isLocal = true;
 
-    // 3a. Priority 1: Ollama if available
     const hasOllama = await ollamaAvailable();
     if (hasOllama) {
       try {
-        console.log(`[Engine] Selecting Priority 1: Local Ollama (${this.ollamaModel})...`);
+        console.log(`[Engine] Selecting Local Ollama (${this.ollamaModel})...`);
         result = await ollamaChat(system, user, { signal });
         engine = 'ollama';
         model = this.ollamaModel;
@@ -99,10 +95,9 @@ export class FreelanceForgeAgent {
       }
     }
 
-    // 3b. Priority 2: Hosted open-weight endpoint (Groq) if configured
     if (!result && this.groqApiKey) {
       try {
-        console.log(`[Engine] Selecting Priority 2: Hosted Groq (${this.groqModel})...`);
+        console.log(`[Engine] Selecting Hosted Groq (${this.groqModel})...`);
         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -134,9 +129,8 @@ export class FreelanceForgeAgent {
       }
     }
 
-    // 3c. Priority 3: Dynamic template synthesizer as last-resort fallback
     if (!result) {
-      console.log(`[Engine] Selecting Priority 3: Dynamic Template Synthesizer...`);
+      console.log(`[Engine] Selecting Dynamic Template Synthesizer...`);
       result = generateIntelligentSynthesis(tool, input, clientName, customSystemPrompt);
       engine = 'synthesizer';
       model = 'Template Synthesizer (Offline Fallback)';
@@ -145,12 +139,11 @@ export class FreelanceForgeAgent {
 
     const durationMs = Date.now() - startTime;
 
-    // Step 4: Persist Interaction to Backboard
     if (clientName && result) {
       try {
         await backboardService.saveClientInteraction(clientName, tool, input, result);
       } catch (err) {
-        console.warn(`[Pipeline Step 4] Backboard persistence warning: ${err.message}`);
+        console.warn(`[Pipeline] Persistence warning: ${err.message}`);
       }
     }
 
@@ -172,30 +165,26 @@ export class FreelanceForgeAgent {
   async executePipelineStream({ tool, input, clientName, customSystemPrompt, onChunk, signal }) {
     const startTime = Date.now();
 
-    // Step 1: Memory & Context Retrieval
     let clientContext = null;
     if (clientName) {
       try {
         clientContext = await backboardService.getClientContext(clientName);
       } catch (err) {
-        console.warn(`[Pipeline Step 1] Backboard lookup warning: ${err.message}`);
+        console.warn(`[Pipeline] Context lookup warning: ${err.message}`);
       }
     }
 
-    // Step 2: Prompt Formatting
     const { system, user } = formatPrompt(tool, input, clientContext, customSystemPrompt);
 
-    // Step 3: Engine Selection
     let accumulated = '';
     let engine = 'synthesizer';
     let model = 'Template Synthesizer (Offline Fallback)';
     let isLocal = true;
 
-    // 3a. Priority 1: Ollama Streaming
     const hasOllama = await ollamaAvailable();
     if (hasOllama) {
       try {
-        console.log(`[Stream] Selecting Priority 1: Local Ollama Stream (${this.ollamaModel})...`);
+        console.log(`[Stream] Selecting Local Ollama Stream (${this.ollamaModel})...`);
         accumulated = await ollamaStream(system, user, (chunk) => {
           if (typeof onChunk === 'function') onChunk(chunk);
         }, { signal });
@@ -209,10 +198,9 @@ export class FreelanceForgeAgent {
       }
     }
 
-    // 3b. Priority 2: Groq Streaming
     if (!accumulated && this.groqApiKey) {
       try {
-        console.log(`[Stream] Selecting Priority 2: Groq Streaming (${this.groqModel})...`);
+        console.log(`[Stream] Selecting Groq Streaming (${this.groqModel})...`);
         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -268,33 +256,29 @@ export class FreelanceForgeAgent {
       }
     }
 
-    // 3c. Priority 3: Synthesizer Streaming (Progressive chunk emission)
     if (!accumulated) {
-      console.log(`[Stream] Selecting Priority 3: Synthesizer Progressive Emission...`);
+      console.log(`[Stream] Selecting Synthesizer Emission...`);
       accumulated = generateIntelligentSynthesis(tool, input, clientName, customSystemPrompt);
       engine = 'synthesizer';
       model = 'Template Synthesizer (Offline Fallback)';
       isLocal = true;
 
-      // Emit in realistic progressive chunks (lines)
       const lines = accumulated.split('\n');
       for (let i = 0; i < lines.length; i++) {
         if (signal?.aborted) break;
         const lineChunk = (i === 0 ? '' : '\n') + lines[i];
         if (typeof onChunk === 'function') onChunk(lineChunk);
-        // Micro pause to give real progressive feel
         await new Promise(r => setTimeout(r, 25));
       }
     }
 
     const durationMs = Date.now() - startTime;
 
-    // Step 4: Persist Interaction to Backboard
     if (clientName && accumulated) {
       try {
         await backboardService.saveClientInteraction(clientName, tool, input, accumulated);
       } catch (err) {
-        console.warn(`[Pipeline Step 4] Backboard persistence warning: ${err.message}`);
+        console.warn(`[Pipeline] Persistence warning: ${err.message}`);
       }
     }
 
