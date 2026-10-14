@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import { BackboardClient } from 'backboard-sdk';
 
 /**
@@ -24,13 +26,13 @@ class BackboardService {
           try {
             const assistants = await this.client.listAssistants({ name: 'FreelanceForge Assistant' });
             if (assistants && assistants.length > 0) {
-              this.assistantId = assistants[0].id;
+              this.assistantId = assistants[0].assistantId || assistants[0].id || assistants[0].assistant_id;
             } else {
               const newAssistant = await this.client.createAssistant({
                 name: 'FreelanceForge Assistant',
                 description: 'Persistent client memory, agreed rates, and scope tracking for FreelanceForge AI.'
               });
-              this.assistantId = newAssistant.id;
+              this.assistantId = newAssistant.assistantId || newAssistant.id || newAssistant.assistant_id;
             }
           } catch (assistErr) {
             console.warn('⚠️ [Backboard] Assistant check failed:', assistErr.message);

@@ -27,6 +27,7 @@ app.get('/api/prompts', (req, res) => {
 
 // Health Check Endpoint (Required by Render, client status strip & tests)
 app.get('/api/health', async (req, res) => {
+  await backboardService.initPromise;
   const engineData = await agent.getAvailableEngines();
   const ollamaInfo = await agent.checkOllamaStatus();
   res.json({
@@ -55,7 +56,8 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Backboard Memory Management Endpoints
-app.get('/api/memory/status', (req, res) => {
+app.get('/api/memory/status', async (req, res) => {
+  await backboardService.initPromise;
   res.json({
     cloudActive: backboardService.isCloudActive(),
     assistantId: backboardService.getAssistantId(),
