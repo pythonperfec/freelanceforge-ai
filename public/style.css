@@ -524,6 +524,98 @@ body {
   border-color: var(--color-ink);
 }
 
+/* Input Desk Tabs (Brief vs System Prompt) */
+.input-desk-tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.input-desk-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 6px 0;
+  margin-bottom: -1px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.12s ease;
+}
+
+.input-desk-tab:hover {
+  color: var(--color-ink);
+}
+
+.input-desk-tab.active {
+  color: var(--accent-ember);
+  border-bottom-color: var(--accent-ember);
+  font-weight: 600;
+}
+
+.transparency-pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface-alt);
+  color: var(--color-ink-faint);
+  transition: all 0.12s ease;
+}
+
+.transparency-pill.modified {
+  background-color: var(--accent-ember-soft);
+  color: var(--accent-ember);
+  border-color: var(--accent-ember);
+  font-weight: 600;
+}
+
+/* Prompt Transparency Header & Editor */
+.prompt-transparency-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xs);
+}
+
+.transparency-title {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--accent-ember);
+  margin-bottom: 2px;
+}
+
+.transparency-subtitle {
+  font-size: 11px;
+  color: var(--color-ink-muted);
+  line-height: 1.4;
+}
+
+textarea.prompt-editor {
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+  color: var(--color-ink);
+  background-color: var(--bg-input);
+  min-height: 240px;
+}
+
 .field-input {
   width: 100%;
   background-color: var(--bg-input);

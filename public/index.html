@@ -118,7 +118,19 @@
           </div>
         </div>
 
-        <div class="form-group flex-fill">
+        <!-- Input Mode Tabs: Raw Brief vs System Prompt Transparency -->
+        <div class="input-desk-tabs" role="tablist">
+          <button type="button" class="input-desk-tab active" id="tab-mode-notes" role="tab" aria-selected="true">
+            <span class="tab-mode-text">Input Brief</span>
+          </button>
+          <button type="button" class="input-desk-tab" id="tab-mode-prompt" role="tab" aria-selected="false">
+            <span class="tab-mode-text">System Prompt</span>
+            <span class="transparency-pill" id="prompt-customized-pill">transparency</span>
+          </button>
+        </div>
+
+        <!-- Notes Input Group -->
+        <div class="form-group flex-fill" id="notes-input-group">
           <div class="label-with-meta">
             <label for="raw-input" class="field-label" id="input-label">Raw Notes or Client Message</label>
             <div class="input-meta">
@@ -150,6 +162,20 @@
           </div>
 
           <textarea id="raw-input" class="field-input textarea-field" placeholder="Paste your rough notes, audio transcript, or client email here..."></textarea>
+        </div>
+
+        <!-- Prompt Transparency Group (Editable System Prompt) -->
+        <div class="form-group flex-fill" id="prompt-transparency-group" hidden>
+          <div class="prompt-transparency-header">
+            <div class="transparency-info">
+              <span class="transparency-title">System Persona &amp; Model Behavior</span>
+              <p class="transparency-subtitle">Inspect or edit the exact system prompt governing Llama 3.1 for this tool. Changes immediately alter how the agent behaves.</p>
+            </div>
+            <button type="button" class="btn-ghost" id="btn-reset-prompt" title="Revert to default prompt">
+              Reset to default
+            </button>
+          </div>
+          <textarea id="custom-system-prompt" class="field-input textarea-field prompt-editor" spellcheck="false" placeholder="Loading system prompt..."></textarea>
         </div>
 
         <!-- Action bar -->

@@ -79,8 +79,10 @@ Polite but completely firm, invoking agreement terms, payment holds, or mileston
 Include recommended Subject Line for each option if applicable.`
 };
 
-export function formatPrompt(tool, input, clientContext = null) {
-  const baseSystem = SYSTEM_PROMPTS[tool] || SYSTEM_PROMPTS.proposal;
+export function formatPrompt(tool, input, clientContext = null, customSystem = null) {
+  const baseSystem = customSystem && customSystem.trim().length > 0
+    ? customSystem.trim()
+    : (SYSTEM_PROMPTS[tool] || SYSTEM_PROMPTS.proposal);
   
   let userContent = `INPUT NOTES / RAW DETAILS:\n${input.trim()}`;
   if (clientContext && Object.keys(clientContext).length > 0) {

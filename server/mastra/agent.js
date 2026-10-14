@@ -45,7 +45,7 @@ export class FreelanceForgeAgent {
   /**
    * Main generation pipeline
    */
-  async executePipeline({ tool, input, clientName }) {
+  async executePipeline({ tool, input, clientName, customSystemPrompt }) {
     const startTime = Date.now();
 
     // Step 1: Memory & Context Retrieval via Backboard
@@ -58,8 +58,8 @@ export class FreelanceForgeAgent {
       }
     }
 
-    // Step 2: Prompt Formatting
-    const { system, user } = formatPrompt(tool, input, clientContext);
+    // Step 2: Prompt Formatting (supports user-edited system prompt)
+    const { system, user } = formatPrompt(tool, input, clientContext, customSystemPrompt);
 
     // Step 3: Inference Dispatch (Local Ollama -> Cloud Groq Fallback -> Smart Synthesizer)
     let result = null;

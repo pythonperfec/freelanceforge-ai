@@ -22,17 +22,19 @@ Freelancers lose up to **30% of their billable hours** to administrative frictio
 3. 🛡️ **Scope Guardian:** Shields freelancers from unpaid scope creep by generating airtight Statement of Work (SOW) boundary documents with add-on rate menus.
 4. 💬 **Client Diplomat:** Generates 3 diplomatic, boundary-setting response strategies (Warm, Firm, Direct) to navigate delicate situations like delayed payments or pushy deadlines.
 5. 🎙️ **Voice-Note Dictation:** Record spontaneous voice memos immediately after a client call; the built-in speech engine transcribes it on the fly and auto-formats it into a structured brief.
+6. 🔍 **Prompt Transparency (Change How Your Agent Behaves):** Unlike closed SaaS tools where system prompts are black boxes, FreelanceForge exposes the exact system prompt governing Llama 3.1 for every tool. Freelancers can inspect and edit it directly to customize tone, inject custom contract clauses, or fine-tune formatting.
 
 ---
 
 ## 💡 Why Open Innovation Matters
 
-Running an open-weight model locally solves three fatal flaws of commercial closed-source AI wrappers:
+Running an open-weight model locally solves the fatal flaws of commercial closed-source AI wrappers:
 
 | Challenge with Closed APIs | How FreelanceForge AI Wins with Open Innovation |
 |---|---|
 | **NDA Violations & Data Leaks:** Clients require confidentiality; sending unreleased product roadmaps to cloud APIs breaches contract terms. | **100% On-Device Privacy:** With Ollama and Llama 3.1 8B, data never leaves the freelancer's machine. Zero server telemetry. |
 | **Crushing Metered SaaS Fees:** Commercial API tokens eat 15–20% of an independent freelancer's margin. | **$0 Marginal Token Cost:** Running local open weights costs exactly $0 per generation. Permanent 100% gross profit margin. |
+| **Black-Box System Prompts:** Closed tools hide their prompts behind proprietary locks, preventing you from changing how the agent reasons. | **Prompt Transparency:** Inspect, edit, and fine-tune the exact system instructions governing the model on the fly. |
 | **Vendor Lock-in & Deprecation:** Closed providers deprecate system prompt behaviors and hike pricing without warning. | **Model Portability:** Switch freely between Llama 3.1, Mistral, Gemma 2, or domain-tuned weights with one line in `.env`. |
 
 ---

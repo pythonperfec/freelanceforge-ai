@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { agent } from './mastra/agent.js';
 import { backboardService } from './middleware/backboard.js';
+import { SYSTEM_PROMPTS } from './mastra/prompts.js';
 
 dotenv.config();
 
@@ -18,6 +19,11 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 app.use(express.static(path.join(__dirname, '../public')));
+
+// Prompt Transparency Endpoint (Allows users to inspect and customize agent system prompts)
+app.get('/api/prompts', (req, res) => {
+  res.json({ prompts: SYSTEM_PROMPTS });
+});
 
 // Health Check Endpoint (Required by Render & status monitors)
 app.get('/api/health', async (req, res) => {
@@ -46,7 +52,7 @@ app.get('/api/health', async (req, res) => {
 // Generation Endpoint
 app.post('/api/generate', async (req, res) => {
   try {
-    const { tool, input, clientName } = req.body;
+    const { tool, input, clientName, customSystemPrompt } = req.body;
 
     if (!input || !input.trim()) {
       return res.status(400).json({ error: 'Please provide input notes or details.' });
@@ -58,7 +64,8 @@ app.post('/api/generate', async (req, res) => {
     const output = await agent.executePipeline({
       tool: selectedTool,
       input,
-      clientName: clientName?.trim() || 'General Client'
+      clientName: clientName?.trim() || 'General Client',
+      customSystemPrompt: customSystemPrompt?.trim() || null
     });
 
     res.json(output);
