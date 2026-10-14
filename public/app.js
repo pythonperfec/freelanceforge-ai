@@ -395,12 +395,18 @@ class WorkspaceController {
     this.btnExportMd.addEventListener('click', () => this.handleExportMd());
     this.btnPrint.addEventListener('click', () => window.print());
 
-    // Shortcuts modal
-    this.btnShortcuts.addEventListener('click', () => this.shortcutsModal.showModal());
-    this.btnCloseModal.addEventListener('click', () => this.shortcutsModal.close());
-    this.shortcutsModal.addEventListener('click', (e) => {
-      if (e.target === this.shortcutsModal) this.shortcutsModal.close();
-    });
+    // Shortcuts modal (accessible via keyboard '?' shortcut)
+    if (this.btnShortcuts) {
+      this.btnShortcuts.addEventListener('click', () => this.shortcutsModal?.showModal());
+    }
+    if (this.btnCloseModal) {
+      this.btnCloseModal.addEventListener('click', () => this.shortcutsModal?.close());
+    }
+    if (this.shortcutsModal) {
+      this.shortcutsModal.addEventListener('click', (e) => {
+        if (e.target === this.shortcutsModal) this.shortcutsModal.close();
+      });
+    }
 
     // Global keyboard shortcuts
     window.addEventListener('keydown', (e) => {

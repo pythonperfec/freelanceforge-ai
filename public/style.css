@@ -91,6 +91,7 @@ body {
    Header Bar
    -------------------------------------------------------------------------- */
 .app-header {
+  position: relative;
   height: 48px;
   min-height: 48px;
   background-color: var(--bg-surface);
@@ -106,6 +107,37 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 120px;
+}
+
+.workspace-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-faint);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.workspace-badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--border-color);
+}
+
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
 }
 
 .brand-mark {
@@ -136,7 +168,9 @@ body {
 .header-right {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 12px;
+  min-width: 120px;
 }
 
 .engine-indicator {
@@ -1253,8 +1287,8 @@ textarea.raw-markdown-editor {
    Bottom Status Strip
    -------------------------------------------------------------------------- */
 .status-strip {
-  height: 32px;
-  min-height: 32px;
+  height: 34px;
+  min-height: 34px;
   background-color: var(--bg-surface);
   border-top: 1px solid var(--border-color);
   padding: 0 20px;
@@ -1290,8 +1324,35 @@ textarea.raw-markdown-editor {
   color: var(--border-color);
 }
 
-.status-note {
-  color: var(--color-ink-faint);
+.footer-attribution {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-muted);
+}
+
+.footer-author {
+  color: var(--color-ink-muted);
+}
+
+.footer-author .author-name {
+  color: var(--accent-ember);
+  font-weight: 600;
+}
+
+.footer-dot {
+  color: var(--border-color);
+}
+
+.footer-project {
+  color: var(--color-ink-muted);
+}
+
+.footer-project .challenge-name {
+  color: var(--color-ink);
+  font-weight: 600;
 }
 
 /* --------------------------------------------------------------------------

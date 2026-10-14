@@ -1,33 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="paper">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FreelanceForge — Local-first workspace for proposals, invoices, and scope</title>
-  <meta name="description" content="Local-first freelancer workspace. Draft proposals, justify invoice line-items, define scope boundaries, and write client correspondence using open-weight models.">
+  <meta name="description"
+    content="Local-first freelancer workspace. Draft proposals, justify invoice line-items, define scope boundaries, and write client correspondence using open-weight models.">
 
   <!-- Typography: Fraunces, IBM Plex Sans, IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
 
   <!-- Markdown parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <!-- Top Application Bar -->
   <header class="app-header">
     <div class="header-left">
+      <span class="workspace-badge">workspace</span>
+    </div>
+
+    <div class="header-center">
       <div class="brand-mark" aria-hidden="true">
         <!-- Minimal SVG anvil / forge line icon -->
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 8h16l-3 4H7L4 8z"/>
-          <path d="M7 12v3h10v-3"/>
-          <path d="M5 19h14"/>
-          <path d="M9 15v4"/>
-          <path d="M15 15v4"/>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8h16l-3 4H7L4 8z" />
+          <path d="M7 12v3h10v-3" />
+          <path d="M5 19h14" />
+          <path d="M9 15v4" />
+          <path d="M15 15v4" />
         </svg>
       </div>
       <span class="brand-name">FreelanceForge</span>
@@ -40,7 +50,7 @@
         <span class="engine-label" id="engine-label">detecting model...</span>
       </div>
       <script>
-        (function() {
+        (function () {
           function updateBadge(d) {
             var lbl = document.getElementById('engine-label');
             var dot = document.getElementById('engine-dot');
@@ -56,16 +66,12 @@
               lbl.textContent = 'local synthesis';
             }
           }
-          fetch('/api/health').then(function(r) { return r.json(); }).then(updateBadge).catch(function() {});
+          fetch('/api/health').then(function (r) { return r.json(); }).then(updateBadge).catch(function () { });
         })();
       </script>
 
       <button type="button" class="btn-ghost" id="theme-toggle" title="Toggle theme (Paper / Forge)">
         <span class="theme-text" id="theme-text">Forge theme</span>
-      </button>
-
-      <button type="button" class="btn-ghost icon-only" id="btn-shortcuts" title="Made by Ishan Khan — Under Hacktoberfest Open-Source AI Challenge project">
-        <span class="key-hint">?</span>
       </button>
     </div>
   </header>
@@ -110,22 +116,25 @@
         <div class="pane-header">
           <div class="pane-title-group">
             <h1 class="pane-title" id="tool-title">Proposal Draft</h1>
-            <p class="pane-subtitle" id="tool-subtitle">Turn raw meeting bullets or voice notes into a structured, client-ready proposal.</p>
+            <p class="pane-subtitle" id="tool-subtitle">Turn raw meeting bullets or voice notes into a structured,
+              client-ready proposal.</p>
           </div>
         </div>
 
         <!-- Pretext Guidance Box: Explains clearly what to enter for the active tool -->
         <div class="pretext-card" id="pretext-card">
           <div class="pretext-icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="16" x2="12" y2="12"/>
-              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
           </div>
           <div class="pretext-content">
             <span class="pretext-heading" id="pretext-heading">What to enter for this tool:</span>
-            <p class="pretext-text" id="pretext-text">Paste client requirements, milestones, deadlines, and pricing notes. Columns start completely clean.</p>
+            <p class="pretext-text" id="pretext-text">Paste client requirements, milestones, deadlines, and pricing
+              notes. Columns start completely clean.</p>
           </div>
         </div>
 
@@ -140,7 +149,8 @@
         <!-- Inputs Form -->
         <div class="form-group">
           <label for="client-name" class="field-label">Client or Project Name</label>
-          <input type="text" id="client-name" class="field-input text-field" placeholder="e.g. Acme HealthTech, Sarah from Studio" value="" autocomplete="off">
+          <input type="text" id="client-name" class="field-input text-field"
+            placeholder="e.g. Acme HealthTech, Sarah from Studio" value="" autocomplete="off">
         </div>
 
         <!-- Tone / Stance selector (active for reply & scope) -->
@@ -158,12 +168,14 @@
           <div class="label-with-meta">
             <label for="raw-input" class="field-label" id="input-label">Raw Notes or Client Message</label>
             <div class="input-meta">
-              <button type="button" class="btn-voice-toggle" id="btn-voice-toggle" title="Record or dictate audio voice note">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                  <line x1="12" y1="19" x2="12" y2="23"/>
-                  <line x1="8" y1="23" x2="16" y2="23"/>
+              <button type="button" class="btn-voice-toggle" id="btn-voice-toggle"
+                title="Record or dictate audio voice note">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" y1="19" x2="12" y2="23" />
+                  <line x1="8" y1="23" x2="16" y2="23" />
                 </svg>
                 <span id="voice-btn-text">Voice note</span>
               </button>
@@ -185,21 +197,24 @@
             </div>
           </div>
 
-          <textarea id="raw-input" class="field-input textarea-field" placeholder="Paste your rough notes, audio transcript, or client email here..."></textarea>
+          <textarea id="raw-input" class="field-input textarea-field"
+            placeholder="Paste your rough notes, audio transcript, or client email here..."></textarea>
         </div>
 
         <!-- Action bar -->
         <div class="pane-action-bar">
           <div class="privacy-note">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
             <span id="privacy-status-text">Local-first: text remains on your hardware</span>
           </div>
 
           <div class="pane-action-buttons">
-            <button type="button" class="btn-ghost btn-stop" id="btn-stop-forge" hidden title="Stop active streaming generation">
+            <button type="button" class="btn-ghost btn-stop" id="btn-stop-forge" hidden
+              title="Stop active streaming generation">
               <span class="stop-dot">■</span> Stop
             </button>
             <button type="button" class="btn-primary" id="btn-forge">
@@ -220,25 +235,28 @@
 
           <div class="output-actions">
             <button type="button" class="btn-ghost icon-btn" id="btn-copy" title="Copy to clipboard">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
               <span class="action-text">Copy</span>
             </button>
             <button type="button" class="btn-ghost icon-btn" id="btn-export-md" title="Save Markdown file">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
               <span class="action-text">Save .md</span>
             </button>
             <button type="button" class="btn-ghost icon-btn" id="btn-print" title="Print or save as PDF">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 6 2 18 2 18 9"/>
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                <rect x="6" y="14" width="12" height="8"/>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9" />
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <rect x="6" y="14" width="12" height="8" />
               </svg>
               <span class="action-text">Print / PDF</span>
             </button>
@@ -251,15 +269,16 @@
           <div class="sheet-empty" id="sheet-empty">
             <div class="empty-mark">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <line x1="10" y1="9" x2="8" y2="9"/>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <line x1="10" y1="9" x2="8" y2="9" />
               </svg>
             </div>
             <h2 class="empty-title">Desk is clear</h2>
-            <p class="empty-desc">Select a tool, enter or choose a sample on the left, and click <strong>Forge Deliverable</strong>.</p>
+            <p class="empty-desc">Select a tool, enter or choose a sample on the left, and click <strong>Forge
+                Deliverable</strong>.</p>
             <p class="empty-footnote">Generated documents format directly onto a print-ready paper sheet.</p>
           </div>
 
@@ -282,7 +301,8 @@
           <!-- Jargon / Gibberish State (Triggered when user enters random characters or test mashing) -->
           <div class="jargon-alert-sheet" id="jargon-alert-sheet" hidden>
             <div class="jargon-icon-box">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -291,7 +311,8 @@
             <h2 class="jargon-title">Actionable Brief Needed</h2>
             <div class="jargon-tag">Unrecognized / Jargon Input</div>
             <p class="jargon-desc">
-              The workbench detected random characters or keyboard test mashing. Llama 3.1 needs real project details to deliver an accurate deliverable.
+              The workbench detected random characters or keyboard test mashing. Llama 3.1 needs real project details to
+              deliver an accurate deliverable.
             </p>
             <div class="jargon-sample-box">
               <span class="jargon-sample-label">Your input:</span>
@@ -358,8 +379,10 @@
       </span>
     </div>
 
-    <div class="status-right">
-      <span class="status-note" id="status-note">100% on-device &bull; zero third-party telemetry</span>
+    <div class="status-right footer-attribution">
+      <span class="footer-author">Made by <strong class="author-name">Ishan Khan</strong></span>
+      <span class="footer-dot">&bull;</span>
+      <span class="footer-project">Under <strong class="challenge-name">Hacktoberfest Open-Source AI Challenge</strong> project</span>
     </div>
   </footer>
 
@@ -384,7 +407,8 @@
         </div>
         <div class="challenge-badge-row">
           <span class="challenge-dot">★</span>
-          <span class="challenge-badge-text">Under <strong>Hacktoberfest Open-Source AI Challenge</strong> project</span>
+          <span class="challenge-badge-text">Under <strong>Hacktoberfest Open-Source AI Challenge</strong>
+            project</span>
         </div>
       </div>
 
@@ -411,11 +435,13 @@
         </div>
       </div>
       <div class="modal-footer">
-        <p class="modal-hint">Made by <strong>Ishan Khan</strong> &bull; Under <strong>Hacktoberfest Open-Source AI Challenge</strong> project</p>
+        <p class="modal-hint">Made by <strong>Ishan Khan</strong> &bull; Under <strong>Hacktoberfest Open-Source AI
+            Challenge</strong> project</p>
       </div>
     </div>
   </dialog>
 
   <script src="app.js"></script>
 </body>
+
 </html>
