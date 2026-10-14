@@ -17,10 +17,11 @@ Freelancers lose up to **30% of their billable hours** to administrative frictio
 
 **FreelanceForge AI** is an open-source, local-first toolkit that turns messy audio notes, bullet points, and Slack messages into polished, client-ready deliverables:
 
-1. 📄 **Project Proposal Generator:** Converts rough scoping bullets into comprehensive 5-figure project proposals with deliverables, timelines, and payment terms.
+1. 📄 **Project Proposal Generator:** Converts rough scoping bullets and audio voice memos into comprehensive 5-figure project proposals with deliverables, timelines, and payment terms.
 2. 🧾 **Invoice Value Justifier:** Translates technical commits and hours into executive business ROI breakdowns that clients pay without dispute.
 3. 🛡️ **Scope Guardian:** Shields freelancers from unpaid scope creep by generating airtight Statement of Work (SOW) boundary documents with add-on rate menus.
 4. 💬 **Client Diplomat:** Generates 3 diplomatic, boundary-setting response strategies (Warm, Firm, Direct) to navigate delicate situations like delayed payments or pushy deadlines.
+5. 🎙️ **Voice-Note Dictation:** Record spontaneous voice memos immediately after a client call; the built-in speech engine transcribes it on the fly and auto-formats it into a structured brief.
 
 ---
 
