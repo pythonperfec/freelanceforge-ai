@@ -53,7 +53,7 @@ export class FreelanceForgeAgent {
         },
         synthesizer: {
           available: true,
-          model: `${this.ollamaModel} (Local Synthesizer)`
+          model: 'Template Synthesizer (Offline Fallback)'
         }
       },
       preferredEngine
@@ -82,7 +82,7 @@ export class FreelanceForgeAgent {
     // Step 3: Engine Selection
     let result = null;
     let engine = 'synthesizer';
-    let model = `${this.ollamaModel} (Local Synthesizer)`;
+    let model = 'Template Synthesizer (Offline Fallback)';
     let isLocal = true;
 
     // 3a. Priority 1: Ollama if available
@@ -139,7 +139,7 @@ export class FreelanceForgeAgent {
       console.log(`[Engine] Selecting Priority 3: Dynamic Template Synthesizer...`);
       result = generateIntelligentSynthesis(tool, input, clientName, customSystemPrompt);
       engine = 'synthesizer';
-      model = `${this.ollamaModel} (Local Synthesizer)`;
+      model = 'Template Synthesizer (Offline Fallback)';
       isLocal = true;
     }
 
@@ -188,7 +188,7 @@ export class FreelanceForgeAgent {
     // Step 3: Engine Selection
     let accumulated = '';
     let engine = 'synthesizer';
-    let model = `${this.ollamaModel} (Local Synthesizer)`;
+    let model = 'Template Synthesizer (Offline Fallback)';
     let isLocal = true;
 
     // 3a. Priority 1: Ollama Streaming
@@ -273,7 +273,7 @@ export class FreelanceForgeAgent {
       console.log(`[Stream] Selecting Priority 3: Synthesizer Progressive Emission...`);
       accumulated = generateIntelligentSynthesis(tool, input, clientName, customSystemPrompt);
       engine = 'synthesizer';
-      model = `${this.ollamaModel} (Local Synthesizer)`;
+      model = 'Template Synthesizer (Offline Fallback)';
       isLocal = true;
 
       // Emit in realistic progressive chunks (lines)

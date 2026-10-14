@@ -699,11 +699,11 @@ class WorkspaceController {
       this.statusNote.textContent = 'Hosted open weights • fast cloud inference';
     } else {
       this.engineDot.style.backgroundColor = 'var(--border-color)';
-      this.engineLabel.textContent = 'local synthesis';
-      this.statusModel.textContent = modelName || 'llama3.1:8b (Local Synthesizer)';
-      this.statusSource.textContent = 'local synthesis';
-      this.privacyStatusText.textContent = 'Local synthesis: offline fallback';
-      this.statusNote.textContent = 'Local-first offline fallback';
+      this.engineLabel.textContent = 'template fallback';
+      this.statusModel.textContent = modelName || 'Template Synthesizer (Offline Fallback)';
+      this.statusSource.textContent = 'template fallback (offline)';
+      this.privacyStatusText.textContent = 'Template fallback: deterministic synthesis (offline)';
+      this.statusNote.textContent = 'Template fallback • offline synthesis';
     }
 
     if (latencyMs !== null && latencyMs !== undefined) {
